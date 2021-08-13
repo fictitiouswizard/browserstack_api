@@ -63,7 +63,7 @@ class ProjectsApi:
         response = requests.get(url, **Settings.request())
 
         if response.status_code == 200:
-            rj = response.json()
+            rj = response.json()["project"]
             return Project(
                 project_id=rj["id"],
                 name=rj["name"],
@@ -98,11 +98,28 @@ class ProjectsApi:
 
     @staticmethod
     def update_project_name(project_id=None, name=None):
-        # TODO
         # https://www.browserstack.com/docs/app-automate/api-reference/appium/projects#update-project-details
         if project_id is None:
             raise ValueError("Project ID is required")
         if name is None:
             raise ValueError("Name is required")
 
+        url = f"{Settings.base_url}/app-automate/projects/{project_id}.json"
+        data = {"name": name}
+        response = requests.put(url, json=data, **Settings.request())
 
+        if response.status_code == 200:
+            rj = response.json()
+            p = rj["project"]
+            project = Project(
+                    project_id=p["project_id"],
+                    name=p["name"],
+                    group_id=p["group_id"],
+                    user_id=p["user_id"],
+                    created_at=p["created_at"],
+                    updated_at=p["updated_at"],
+                    sub_group_id=p["sub_group_id"]
+                )
+            return project
+        else:
+            raise Exception("Invalid Status Code")
