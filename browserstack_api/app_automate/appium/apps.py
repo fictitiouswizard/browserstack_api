@@ -122,7 +122,3 @@ class AppsApi:
                 return False
         else:
             raise Exception("Invalid Status Code")
-
-
-
-

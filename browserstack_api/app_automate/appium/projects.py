@@ -2,6 +2,7 @@ import requests
 
 from browserstack_api import Settings
 from .builds import Build
+from .reponses import DeleteResponse
 
 
 class Project:
@@ -123,3 +124,33 @@ class ProjectsApi:
             return project
         else:
             raise Exception("Invalid Status Code")
+
+    @staticmethod
+    def status_badge_key(project_id=None):
+        if project_id is None:
+            raise ValueError("Project ID is required")
+
+        url = f"{Settings.base_url}/app-automate/projects/{project_id}/badge_key"
+        response = requests.get(url, **Settings.request())
+
+        if response.status_code == 200:
+            return response.text
+        else:
+            raise Exception(f"Invalid Status Code: {response.status_code}")
+
+    @staticmethod
+    def delete(project_id=None):
+        if project_id is None:
+            raise ValueError("Project ID is required")
+
+        url = f"{Settings.base_url}/app-automate/projects/{project_id}.json"
+        response = requests.delete(url, **Settings.request())
+
+        if response.status_code == 200:
+            rj = response.json()
+            return DeleteResponse(
+                status=rj["status"],
+                message=rj["message"]
+            )
+        else:
+            raise Exception(f"Invalid Status Code: {response.status_code}")
