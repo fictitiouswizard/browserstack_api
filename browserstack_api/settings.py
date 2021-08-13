@@ -11,6 +11,7 @@ class Settings:
     password = os.getenv("browserstack_key")
     proxies = {}
     verify_ssl = True
+    base_url = "https://api-cloud.browserstack.com"
 
     @classmethod
     def auth(cls):

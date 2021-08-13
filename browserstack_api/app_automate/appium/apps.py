@@ -1,9 +1,6 @@
 import requests
-from dotenv import load_dotenv
 
 from browserstack_api import Settings
-
-load_dotenv()
 
 
 class UploadResponse:
@@ -26,13 +23,14 @@ class UploadedApp:
 
 
 class AppsApi:
-    base_url = "https://api-cloud.browserstack.com"
     upload_app_path = "/app-automate/upload"
     uploaded_apps_path = "/app-automate/recent_apps"
+    uploaded_by_group_path = "/app-automate/recent_group_apps"
+    delete_app_path = "/app-automate/app/delete/"
 
     @staticmethod
     def upload_app(file=None, url=None, custom_id=None):
-        api_url = f"{AppsApi.base_url}{AppsApi.upload_app_path}"
+        api_url = f"{Settings.base_url}{AppsApi.upload_app_path}"
 
         if file is not None and url is not None:
             raise ValueError("Must use file or url not both")
@@ -58,7 +56,7 @@ class AppsApi:
 
     @staticmethod
     def uploaded_apps(custom_id=None):
-        api_url = f"{AppsApi.base_url}{AppsApi.uploaded_apps_path}"
+        api_url = f"{Settings.base_url}{AppsApi.uploaded_apps_path}"
 
         if custom_id is not None:
             api_url = f"{api_url}/{custom_id}"
@@ -83,6 +81,47 @@ class AppsApi:
         else:
             raise Exception("Invalid Status Code")
 
+    @staticmethod
+    def uploaded_apps_by_group():
+        url = f"{Settings.base_url}{AppsApi.uploaded_by_group_path}"
+
+        response = requests.get(url, **Settings.request())
+
+        if response.status_code == 200:
+            rj = response.json()
+            return [
+                UploadedApp(
+                    app_name=app["app_name"],
+                    app_version=app["app_version"],
+                    app_url=app["app_url"],
+                    app_id=app["app_id"],
+                    uploaded_at=app["uploaded_at"],
+                    custom_id=app["custom_id"],
+                    shareable_id=app["shareable_id"]
+                )
+                for app
+                in rj.json()
+            ]
+        else:
+            raise Exception("Invalid Status Code")
+
+    @staticmethod
+    def delete_app(app_id):
+        if app_id is None:
+            raise ValueError("Must enter an app id")
+
+        url = f"{Settings.base_url}{AppsApi.delete_app_path}/{app_id}"
+
+        response = requests.delete(url, **Settings.request())
+
+        if response.status_code == 200:
+            rj = response.json()
+            if rj["success"] is True:
+                return True
+            else:
+                return False
+        else:
+            raise Exception("Invalid Status Code")
 
 
 
