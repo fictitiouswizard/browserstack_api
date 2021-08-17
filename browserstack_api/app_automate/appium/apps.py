@@ -23,14 +23,10 @@ class UploadedApp:
 
 
 class AppsApi:
-    upload_app_path = "/app-automate/upload"
-    uploaded_apps_path = "/app-automate/recent_apps"
-    uploaded_by_group_path = "/app-automate/recent_group_apps"
-    delete_app_path = "/app-automate/app/delete/"
 
     @staticmethod
     def upload_app(file=None, url=None, custom_id=None):
-        api_url = f"{Settings.base_url}{AppsApi.upload_app_path}"
+        api_url = f"{Settings.base_url}/app-automate/upload"
 
         if file is not None and url is not None:
             raise ValueError("Must use file or url not both")
@@ -56,7 +52,7 @@ class AppsApi:
 
     @staticmethod
     def uploaded_apps(custom_id=None):
-        api_url = f"{Settings.base_url}{AppsApi.uploaded_apps_path}"
+        api_url = f"{Settings.base_url}/app-automate/recent_apps"
 
         if custom_id is not None:
             api_url = f"{api_url}/{custom_id}"
@@ -83,7 +79,7 @@ class AppsApi:
 
     @staticmethod
     def uploaded_apps_by_group():
-        url = f"{Settings.base_url}{AppsApi.uploaded_by_group_path}"
+        url = f"{Settings.base_url}/app-automate/recent_group_apps"
 
         response = requests.get(url, **Settings.request())
 
@@ -110,7 +106,7 @@ class AppsApi:
         if app_id is None:
             raise ValueError("Must enter an app id")
 
-        url = f"{Settings.base_url}{AppsApi.delete_app_path}/{app_id}"
+        url = f"{Settings.base_url}/app-automate/app/delete/{app_id}"
 
         response = requests.delete(url, **Settings.request())
 
