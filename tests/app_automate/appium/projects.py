@@ -1,0 +1,72 @@
+import unittest
+
+from appium import webdriver
+import time
+
+from browserstack_api.app_automate.appium import AppsApi
+from browserstack_api.app_automate.appium import ProjectsApi
+from browserstack_api.app_automate.appium import BuildsApi
+from browserstack_api import Settings
+
+
+class TestProjectsApi(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        uploaded_app = AppsApi.upload_app("./bin/Calculator.apk", custom_id="Calc")
+        app = AppsApi.uploaded_apps(uploaded_app.custom_id)[0]
+        cls.app = app
+
+        desired_caps = {
+            "build": "Python Android",
+            "device": "Samsung Galaxy S8 Plus",
+            "app": app.app_url,
+            "project": "BrowserStack Rest API"
+        }
+
+        url = f"https://{Settings.username}:{Settings.password}@hub-cloud.browserstack.com/wd/hub"
+
+        driver = webdriver.Remote(url, desired_caps)
+        time.sleep(5)
+        driver.quit()
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        AppsApi.delete_app(cls.app.app_id)
+
+    def test_recent_projects(self):
+        projects = ProjectsApi.recent_projects()
+        self.assertGreaterEqual(len(projects), 1)
+
+    def test_details(self):
+        projects = ProjectsApi.recent_projects()
+        project = ProjectsApi.details(projects[0].project_id)
+        self.assertEqual(project.name, "BrowserStack Rest API")
+
+    def test_update_project_name(self):
+        projects = ProjectsApi.recent_projects()
+        project = ProjectsApi.update_project_name(projects[0].project_id, "Test Rest API")
+        self.assertEqual(project.name, "Test Rest API")
+
+    def test_status_badge_key(self):
+        projects = ProjectsApi.recent_projects()
+        badge_key = ProjectsApi.status_badge_key(projects[0].project_id)
+        self.assertGreater(len(badge_key), 0)
+
+    def test_delete(self):
+        projects = ProjectsApi.recent_projects()
+        project = ProjectsApi.details(projects[0].project_id)
+        for build in project.builds:
+            BuildsApi.delete(build.hashed_id)
+        response = ProjectsApi.delete(projects[0].project_id)
+        self.assertEqual(response.status, "ok")
+
+
+def projects_api_test_suite():
+    suite = unittest.TestSuite()
+    suite.addTest(TestProjectsApi("test_recent_projects"))
+    suite.addTest(TestProjectsApi("test_details"))
+    suite.addTest(TestProjectsApi("test_update_project_name"))
+    suite.addTest(TestProjectsApi("test_status_badge_key"))
+    suite.addTest(TestProjectsApi("test_delete"))
+    return suite

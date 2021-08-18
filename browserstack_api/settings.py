@@ -7,8 +7,8 @@ load_dotenv()
 
 
 class Settings:
-    username = os.getenv("browserstack_username")
-    password = os.getenv("browserstack_key")
+    username = os.getenv("BROWSERSTACK_USERNAME")
+    password = os.getenv("BROWSERSTACK_KEY")
     proxies = {}
     verify_ssl = True
     base_url = "https://api-cloud.browserstack.com"

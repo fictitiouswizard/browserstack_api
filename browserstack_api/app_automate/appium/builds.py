@@ -2,7 +2,7 @@ import requests
 
 from browserstack_api import Settings
 from browserstack_api.app_automate.appium.apps import UploadedApp
-from browserstack_api.app_automate.appium.reponses import DeleteResponse
+from browserstack_api.app_automate.appium.responses import DeleteResponse
 from browserstack_api.app_automate.appium.sessions import Session
 
 
@@ -65,29 +65,29 @@ class BuildsApi:
             rj = response.json()
             sessions = [
                 Session(
-                    name=s["name"],
-                    duration=s["duration"],
-                    os=s["os"],
-                    os_version=s["os_version"],
-                    browser_version=s["browser_version"],
-                    browser=s["browser"],
-                    device=s["device"],
-                    status=s["status"],
-                    hashed_id=s["hashed_id"],
-                    reason=s["reason"],
-                    build_name=s["build_name"],
-                    project_name=s["project_name"],
-                    logs=s["logs"],
-                    browser_url=s["browser_url"],
-                    public_url=s["public_url"],
-                    appium_logs_url=s["appium_logs_url"],
-                    video_url=s["video_url"],
+                    name=s["name"] if "name" in s else None,
+                    duration=s["duration"] if "duration" in s else None,
+                    os=s["os"] if "os" in s else None,
+                    os_version=s["os_version"] if "os_version" in s else None,
+                    browser_version=s["browser_version"] if "browser_version" in s else None,
+                    browser=s["browser"] if "browser" in s else None,
+                    device=s["device"] if "device" in s else None,
+                    status=s["status"] if "status" in s else None,
+                    hashed_id=s["hashed_id"] if "hashed_id" in s else None,
+                    reason=s["reason"] if "reason" in s else None,
+                    build_name=s["build_name"] if "build_name" in s else None,
+                    project_name=s["project_name"] if "project_name" in s else None,
+                    logs=s["logs"] if "logs" in s else None,
+                    browser_url=s["browser_url"] if "browser_url" in s else None,
+                    public_url=s["public_url"] if "public_url" in s else None,
+                    appium_logs_url=s["appium_logs_url"] if "appium_logs_url" in s else None,
+                    video_url=s["video_url"] if "video_url" in s else None,
                     app_details=UploadedApp(
-                        app_url=s["app_details"]["app_url"],
-                        app_name=s["app_details"]["app_name"],
-                        app_version=s["app_details"]["app_version"],
-                        custom_id=s["app_details"]["app_custom_id"],
-                        uploaded_at=s["app_details"]["uploaded_at"]
+                        app_url=s["app_details"]["app_url"] if "app_url" in s["app_details"] else None,
+                        app_name=s["app_details"]["app_name"] if "app_name" in s["app_details"] else None,
+                        app_version=s["app_details"]["app_version"] if "app_version" in s["app_details"] else None,
+                        custom_id=s["app_details"]["app_custom_id"] if "app_custom_id" in s["app_details"] else None,
+                        uploaded_at=s["app_details"]["uploaded_at"] if "uploaded_at" in s["app_details"] else None
                     )
                 )
                 for s

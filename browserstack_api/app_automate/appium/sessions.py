@@ -1,7 +1,7 @@
 import requests
 
 from browserstack_api import Settings
-from browserstack_api.app_automate.appium.reponses import DeleteResponse
+from browserstack_api.app_automate.appium.responses import DeleteResponse
 from browserstack_api.app_automate.appium.apps import UploadedApp
 
 

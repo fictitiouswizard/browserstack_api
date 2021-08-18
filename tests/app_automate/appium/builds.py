@@ -1,0 +1,60 @@
+import unittest
+
+from appium import webdriver
+import time
+
+
+from browserstack_api.app_automate.appium import BuildsApi
+from browserstack_api.app_automate.appium import AppsApi
+from browserstack_api import Settings
+
+
+class TestBuildsApi(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        uploaded_app = AppsApi.upload_app("./bin/Calculator.apk", custom_id="Calc")
+        app = AppsApi.uploaded_apps(uploaded_app.custom_id)[0]
+        cls.app = app
+
+        desired_caps = {
+            "build": "Python Android",
+            "device": "Samsung Galaxy S8 Plus",
+            "app": app.app_url,
+            "project": "BrowserStack Rest API"
+        }
+
+        url = f"https://{Settings.username}:{Settings.password}@hub-cloud.browserstack.com/wd/hub"
+
+        driver = webdriver.Remote(url, desired_caps)
+
+        time.sleep(5)
+
+        driver.quit()
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        AppsApi.delete_app(cls.app.app_id)
+
+    def test_recent_builds(self):
+        builds = BuildsApi.recent_builds()
+        self.assertGreaterEqual(len(builds), 1)
+
+    def test_details(self):
+        builds = BuildsApi.recent_builds()
+        sessions = BuildsApi.details(builds[0].hashed_id)
+        self.assertGreaterEqual(len(sessions), 1)
+
+    def test_delete(self):
+        builds = BuildsApi.recent_builds()
+        response = BuildsApi.delete(builds[0].hashed_id)
+        self.assertEqual(response.status, "ok")
+
+
+
+def builds_api_test_suite():
+    suite = unittest.TestSuite()
+    suite.addTest(TestBuildsApi("test_recent_builds"))
+    suite.addTest(TestBuildsApi("test_details"))
+    suite.addTest(TestBuildsApi("test_delete"))
+    return suite

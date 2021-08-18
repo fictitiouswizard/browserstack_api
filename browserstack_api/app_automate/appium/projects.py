@@ -2,7 +2,7 @@ import requests
 
 from browserstack_api import Settings
 from .builds import Build
-from .reponses import DeleteResponse
+from .responses import DeleteResponse
 
 
 class Project:
@@ -20,11 +20,9 @@ class Project:
 
 class ProjectsApi:
 
-    recent_projects_path = "/app-automate/projects.json"
-
     @staticmethod
     def recent_projects(limit=None, offset=None, status=None):
-        url = f"{Settings.base_url}{ProjectsApi.recent_projects_path}"
+        url = f"{Settings.base_url}/app-automate/projects.json"
 
         params = {}
         if limit is not None:
@@ -40,13 +38,13 @@ class ProjectsApi:
             rj = response.json()
             projects = [
                 Project(
-                    project_id=p["project_id"],
-                    name=p["name"],
-                    group_id=p["group_id"],
-                    user_id=p["user_id"],
-                    created_at=p["created_at"],
-                    updated_at=p["updated_at"],
-                    sub_group_id=p["sub_group_id"]
+                    project_id=p["id"] if "id" in p else None,
+                    name=p["name"] if "name" in p else None,
+                    group_id=p["group_id"] if "group_id" in p else None,
+                    user_id=p["user_id"] if "user_id" in p else None,
+                    created_at=p["created_at"] if "created_at" in p else None,
+                    updated_at=p["updated_at"] if "updated_at" in p else None,
+                    sub_group_id=p["sub_group_id"] if "sub_group_id" in p else None
                 )
                 for p
                 in rj
@@ -66,29 +64,29 @@ class ProjectsApi:
         if response.status_code == 200:
             rj = response.json()["project"]
             return Project(
-                project_id=rj["id"],
-                name=rj["name"],
-                group_id=rj["group_id"],
-                user_id=rj["user_id"],
-                created_at=rj["created_at"],
-                updated_at=rj["updated_at"],
-                sub_group_id=rj["sub_group_id"],
+                project_id=rj["id"] if "id" in rj else None,
+                name=rj["name"] if "name" in rj else None,
+                group_id=rj["group_id"] if "group_id" in rj else None,
+                user_id=rj["user_id"] if "user_id" in rj else None,
+                created_at=rj["created_at"] if "created_at" in rj else None,
+                updated_at=rj["updated_at"] if "updated_at" in rj else None,
+                sub_group_id=rj["sub_group_id"] if "sub_group_id" in rj else None,
                 builds=[
                     Build(
-                        build_id=b["id"],
-                        name=b["name"],
-                        duration=b["duration"],
-                        status=b["status"],
-                        tags=b["tags"],
-                        group_id=b["group_id"],
-                        user_id=b["user_id"],
-                        automation_project_id=b["automation_project_id"],
-                        created_at=b["created_at"],
-                        updated_at=b["updated_at"],
-                        hashed_id=b["hashed_id"],
-                        delta=b["delta"],
-                        test_data=b["test_data"],
-                        sub_group_id=b["sub_group_id"]
+                        build_id=b["id"] if "id" in b else None,
+                        name=b["name"] if "name" in b else None,
+                        duration=b["duration"] if "duration" in b else None,
+                        status=b["status"] if "status" in b else None,
+                        tags=b["tags"] if "tags" in b else None,
+                        group_id=b["group_id"] if "group_id" in b else None,
+                        user_id=b["user_id"] if "user_id" in b else None,
+                        automation_project_id=b["automation_project_id"] if "automation_project_id" in b else None,
+                        created_at=b["created_at"] if "created_at" in b else None,
+                        updated_at=b["updated_at"] if "updated_at" in b else None,
+                        hashed_id=b["hashed_id"] if "hashed_id" in b else None,
+                        delta=b["delta"] if "delta" in b else None,
+                        test_data=b["test_data"] if "test_data" in b else None,
+                        sub_group_id=b["sub_group_id"] if "sub_group_id" in b else None
                     )
                     for b
                     in rj["builds"]
@@ -110,16 +108,15 @@ class ProjectsApi:
         response = requests.put(url, json=data, **Settings.request())
 
         if response.status_code == 200:
-            rj = response.json()
-            p = rj["project"]
+            p = response.json()
             project = Project(
-                    project_id=p["project_id"],
-                    name=p["name"],
-                    group_id=p["group_id"],
-                    user_id=p["user_id"],
-                    created_at=p["created_at"],
-                    updated_at=p["updated_at"],
-                    sub_group_id=p["sub_group_id"]
+                    project_id=p["id"] if "id" in p else None,
+                    name=p["name"] if "name" in p else None,
+                    group_id=p["group_id"] if "group_id" in p else None,
+                    user_id=p["user_id"] if "user_id" in p else None,
+                    created_at=p["created_at"] if "created_at" in p else None,
+                    updated_at=p["updated_at"] if "updated_at" in p else None,
+                    sub_group_id=p["sub_group_id"] if "sub_group_id" in p else None
                 )
             return project
         else:

@@ -46,7 +46,11 @@ class AppsApi:
 
         if response.status_code == 200:
             rj = response.json()
-            return UploadResponse(rj["app_url"], rj["custom_id"], rj["shareable_id"])
+            return UploadResponse(
+                app_url=rj["app_url"] if "app_url" in rj else None,
+                custom_id=rj["custom_id"] if "custom_id" in rj else None,
+                shareable_id=rj["shareable_id"] if "shareable_id" in rj else None
+            )
         else:
             raise Exception("Invalid Status Code")
 
@@ -61,18 +65,23 @@ class AppsApi:
 
         if response.status_code == 200:
             rj = response.json()
+
+            if "message" in rj:
+                if rj["message"] == "No results found":
+                    return []
+
             return [
                 UploadedApp(
-                    app_name=app["app_name"],
-                    app_version=app["app_version"],
-                    app_url=app["app_url"],
-                    app_id=app["app_id"],
-                    uploaded_at=app["uploaded_at"],
-                    custom_id=app["custom_id"],
-                    shareable_id=app["shareable_id"]
+                    app_name=app["app_name"] if "app_name" in app else None,
+                    app_version=app["app_version"] if "app_version" in app else None,
+                    app_url=app["app_url"] if "app_url" in app else None,
+                    app_id=app["app_id"] if "app_id" in app else None,
+                    uploaded_at=app["uploaded_at"] if "uploaded_at" in app else None,
+                    custom_id=app["custom_id"] if "custom_id" in app else None,
+                    shareable_id=app["shareable_id"] if "shareable_id" in app else None
                 )
                 for app
-                in rj.json()
+                in rj
             ]
         else:
             raise Exception("Invalid Status Code")
@@ -85,18 +94,23 @@ class AppsApi:
 
         if response.status_code == 200:
             rj = response.json()
+
+            if "message" in rj:
+                if rj["message"] == "No results found":
+                    return []
+
             return [
                 UploadedApp(
-                    app_name=app["app_name"],
-                    app_version=app["app_version"],
-                    app_url=app["app_url"],
-                    app_id=app["app_id"],
-                    uploaded_at=app["uploaded_at"],
-                    custom_id=app["custom_id"],
-                    shareable_id=app["shareable_id"]
+                    app_name=app["app_name"] if "app_name" in app else None,
+                    app_version=app["app_version"] if "app_version" in app else None,
+                    app_url=app["app_url"] if "app_url" in app else None,
+                    app_id=app["app_id"] if "app_id" in app else None,
+                    uploaded_at=app["uploaded_at"] if "uploaded_at" in app else None,
+                    custom_id=app["custom_id"] if "custom_id" in app else None,
+                    shareable_id=app["shareable_id"] if "shareable_id" in app else None
                 )
                 for app
-                in rj.json()
+                in rj
             ]
         else:
             raise Exception("Invalid Status Code")
