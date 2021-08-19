@@ -9,7 +9,7 @@ class Device:
         self.real_mobile = real_mobile
 
 
-class DeviceApi(Api):
+class DevicesApi(Api):
 
     @classmethod
     def get_device_list(cls):

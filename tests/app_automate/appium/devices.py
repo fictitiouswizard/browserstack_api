@@ -8,7 +8,7 @@ class TestDevicesApi(unittest.TestCase):
 
     def test_get_device_list(self):
         try:
-            devices = DeviceApi.get_device_list()
+            devices = DevicesApi.get_device_list()
             self.assertGreaterEqual(len(devices), 0, "Devices should be returned")
         except HTTPError as e:
             self.fail(f"Invalid Status Code returned: {e.response}")

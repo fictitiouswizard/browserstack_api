@@ -1,6 +1,6 @@
 import unittest
 
-from bsapi.app_automate.appium.apps import AppsApi
+from bsapi.app_automate.appium import AppsApi
 
 
 class TestAppsApi(unittest.TestCase):
