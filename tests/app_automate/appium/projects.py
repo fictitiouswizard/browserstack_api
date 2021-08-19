@@ -1,15 +1,16 @@
 import unittest
 
 from appium import webdriver
-import time
 
-from browserstack_api.app_automate.appium import AppsApi
-from browserstack_api.app_automate.appium import ProjectsApi
-from browserstack_api.app_automate.appium import BuildsApi
-from browserstack_api import Settings
+from bsapi.app_automate.appium import AppsApi
+from bsapi.app_automate.appium import ProjectsApi
+from bsapi.app_automate.appium import BuildsApi
+from bsapi import Settings
 
 
 class TestProjectsApi(unittest.TestCase):
+
+    app = None
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -25,9 +26,7 @@ class TestProjectsApi(unittest.TestCase):
         }
 
         url = f"https://{Settings.username}:{Settings.password}@hub-cloud.browserstack.com/wd/hub"
-
         driver = webdriver.Remote(url, desired_caps)
-        time.sleep(5)
         driver.quit()
 
     @classmethod
@@ -55,11 +54,14 @@ class TestProjectsApi(unittest.TestCase):
 
     def test_delete(self):
         projects = ProjectsApi.recent_projects()
-        project = ProjectsApi.details(projects[0].project_id)
-        for build in project.builds:
-            BuildsApi.delete(build.hashed_id)
-        response = ProjectsApi.delete(projects[0].project_id)
-        self.assertEqual(response.status, "ok")
+        for project in projects:
+            if project.builds is None:
+                continue
+
+            for build in project.builds:
+                BuildsApi.delete(build.hashed_id)
+            response = ProjectsApi.delete(project.project_id)
+            self.assertEqual(response.status, "ok")
 
 
 def projects_api_test_suite():

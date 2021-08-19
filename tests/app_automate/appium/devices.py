@@ -1,7 +1,7 @@
 import unittest
 from requests.exceptions import HTTPError
 
-from browserstack_api.app_automate.appium.devices import *
+from bsapi.app_automate.appium.devices import *
 
 
 class TestDevicesApi(unittest.TestCase):

@@ -1,6 +1,4 @@
-import requests
-
-from browserstack_api import Settings
+from bsapi import Settings, Api
 from .builds import Build
 from .responses import DeleteResponse
 
@@ -18,10 +16,10 @@ class Project:
         self.builds = builds
 
 
-class ProjectsApi:
+class ProjectsApi(Api):
 
-    @staticmethod
-    def recent_projects(limit=None, offset=None, status=None):
+    @classmethod
+    def recent_projects(cls, limit=None, offset=None, status=None):
         url = f"{Settings.base_url}/app-automate/projects.json"
 
         params = {}
@@ -32,7 +30,7 @@ class ProjectsApi:
         if status is not None:
             params["status"] = status
 
-        response = requests.get(url, params=params, **Settings.request())
+        response = cls.http.get(url, params=params, **Settings.request())
 
         if response.status_code == 200:
             rj = response.json()
@@ -53,13 +51,13 @@ class ProjectsApi:
         else:
             raise Exception(f"Invalid Status Code: {response.status_code}")
 
-    @staticmethod
-    def details(project_id=None):
+    @classmethod
+    def details(cls, project_id=None):
         if project_id is None:
             raise ValueError("Project ID cannot be None")
 
         url = f"{Settings.base_url}/app-automate/projects/{project_id}.json"
-        response = requests.get(url, **Settings.request())
+        response = cls.http.get(url, **Settings.request())
 
         if response.status_code == 200:
             rj = response.json()["project"]
@@ -95,9 +93,8 @@ class ProjectsApi:
         else:
             raise Exception(f"Invalid Status Code: {response.status_code}")
 
-    @staticmethod
-    def update_project_name(project_id=None, name=None):
-        # https://www.browserstack.com/docs/app-automate/api-reference/appium/projects#update-project-details
+    @classmethod
+    def update_project_name(cls, project_id=None, name=None):
         if project_id is None:
             raise ValueError("Project ID is required")
         if name is None:
@@ -105,7 +102,7 @@ class ProjectsApi:
 
         url = f"{Settings.base_url}/app-automate/projects/{project_id}.json"
         data = {"name": name}
-        response = requests.put(url, json=data, **Settings.request())
+        response = cls.http.put(url, json=data, **Settings.request())
 
         if response.status_code == 200:
             p = response.json()
@@ -122,26 +119,26 @@ class ProjectsApi:
         else:
             raise Exception("Invalid Status Code")
 
-    @staticmethod
-    def status_badge_key(project_id=None):
+    @classmethod
+    def status_badge_key(cls, project_id=None):
         if project_id is None:
             raise ValueError("Project ID is required")
 
         url = f"{Settings.base_url}/app-automate/projects/{project_id}/badge_key"
-        response = requests.get(url, **Settings.request())
+        response = cls.http.get(url, **Settings.request())
 
         if response.status_code == 200:
             return response.text
         else:
             raise Exception(f"Invalid Status Code: {response.status_code}")
 
-    @staticmethod
-    def delete(project_id=None):
+    @classmethod
+    def delete(cls, project_id=None):
         if project_id is None:
             raise ValueError("Project ID is required")
 
         url = f"{Settings.base_url}/app-automate/projects/{project_id}.json"
-        response = requests.delete(url, **Settings.request())
+        response = cls.http.delete(url, **Settings.request())
 
         if response.status_code == 200:
             rj = response.json()

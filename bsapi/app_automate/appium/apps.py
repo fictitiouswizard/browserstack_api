@@ -1,6 +1,4 @@
-import requests
-
-from browserstack_api import Settings
+from bsapi import Settings, Api
 
 
 class UploadResponse:
@@ -22,10 +20,10 @@ class UploadedApp:
         self.shareable_id = shareable_id
 
 
-class AppsApi:
+class AppsApi(Api):
 
-    @staticmethod
-    def upload_app(file=None, url=None, custom_id=None):
+    @classmethod
+    def upload_app(cls, file=None, url=None, custom_id=None):
         api_url = f"{Settings.base_url}/app-automate/upload"
 
         if file is not None and url is not None:
@@ -40,9 +38,9 @@ class AppsApi:
             params["custom_id"] = custom_id
         if file is not None:
             files = {"file": open(file, "rb")}
-            response = requests.post(api_url, files=files, data=params, **Settings.request())
+            response = cls.http.post(api_url, files=files, data=params, **Settings.request())
         else:
-            response = requests.post(api_url, data=params, **Settings.request())
+            response = cls.http.post(api_url, data=params, **Settings.request())
 
         if response.status_code == 200:
             rj = response.json()
@@ -54,14 +52,14 @@ class AppsApi:
         else:
             raise Exception("Invalid Status Code")
 
-    @staticmethod
-    def uploaded_apps(custom_id=None):
+    @classmethod
+    def uploaded_apps(cls, custom_id=None):
         api_url = f"{Settings.base_url}/app-automate/recent_apps"
 
         if custom_id is not None:
             api_url = f"{api_url}/{custom_id}"
 
-        response = requests.get(api_url, **Settings.request())
+        response = cls.http.get(api_url, **Settings.request())
 
         if response.status_code == 200:
             rj = response.json()
@@ -86,11 +84,11 @@ class AppsApi:
         else:
             raise Exception("Invalid Status Code")
 
-    @staticmethod
-    def uploaded_apps_by_group():
+    @classmethod
+    def uploaded_apps_by_group(cls):
         url = f"{Settings.base_url}/app-automate/recent_group_apps"
 
-        response = requests.get(url, **Settings.request())
+        response = cls.http.get(url, **Settings.request())
 
         if response.status_code == 200:
             rj = response.json()
@@ -115,14 +113,14 @@ class AppsApi:
         else:
             raise Exception("Invalid Status Code")
 
-    @staticmethod
-    def delete_app(app_id):
+    @classmethod
+    def delete_app(cls, app_id):
         if app_id is None:
             raise ValueError("Must enter an app id")
 
         url = f"{Settings.base_url}/app-automate/app/delete/{app_id}"
 
-        response = requests.delete(url, **Settings.request())
+        response = cls.http.delete(url, **Settings.request())
 
         if response.status_code == 200:
             rj = response.json()

@@ -1,6 +1,6 @@
 import unittest
 
-from browserstack_api.app_automate.appium.apps import AppsApi
+from bsapi.app_automate.appium.apps import AppsApi
 
 
 class TestAppsApi(unittest.TestCase):

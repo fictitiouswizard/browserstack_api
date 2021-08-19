@@ -1,15 +1,15 @@
 import unittest
 
 from appium import webdriver
-import time
 
-
-from browserstack_api.app_automate.appium import BuildsApi
-from browserstack_api.app_automate.appium import AppsApi
-from browserstack_api import Settings
+from bsapi.app_automate.appium import BuildsApi
+from bsapi.app_automate.appium import AppsApi
+from bsapi import Settings
 
 
 class TestBuildsApi(unittest.TestCase):
+
+    app = None
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -25,11 +25,7 @@ class TestBuildsApi(unittest.TestCase):
         }
 
         url = f"https://{Settings.username}:{Settings.password}@hub-cloud.browserstack.com/wd/hub"
-
         driver = webdriver.Remote(url, desired_caps)
-
-        time.sleep(5)
-
         driver.quit()
 
     @classmethod
@@ -51,10 +47,11 @@ class TestBuildsApi(unittest.TestCase):
         self.assertEqual(response.status, "ok")
 
 
-
 def builds_api_test_suite():
     suite = unittest.TestSuite()
+
     suite.addTest(TestBuildsApi("test_recent_builds"))
     suite.addTest(TestBuildsApi("test_details"))
     suite.addTest(TestBuildsApi("test_delete"))
+
     return suite

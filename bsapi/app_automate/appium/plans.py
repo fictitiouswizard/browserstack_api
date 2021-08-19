@@ -1,6 +1,4 @@
-import requests
-
-from browserstack_api.settings import Settings
+from bsapi import Settings, Api
 
 
 class AppAutomatePlan:
@@ -16,13 +14,13 @@ class AppAutomatePlan:
         self.queued_sessions_max_allowed = queued_sessions_max_allowed
 
 
-class PlansApi:
+class PlansApi(Api):
 
-    @staticmethod
-    def details():
+    @classmethod
+    def details(cls):
         url = f"{Settings.base_url}/app-automate/plan.json"
 
-        response = requests.get(url, **Settings.request())
+        response = cls.http.get(url, **Settings.request())
 
         if response.status_code == 200:
             rj = response.json()

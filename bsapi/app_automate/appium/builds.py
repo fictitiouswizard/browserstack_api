@@ -1,9 +1,7 @@
-import requests
-
-from browserstack_api import Settings
-from browserstack_api.app_automate.appium.apps import UploadedApp
-from browserstack_api.app_automate.appium.responses import DeleteResponse
-from browserstack_api.app_automate.appium.sessions import Session
+from bsapi import Settings, Api
+from bsapi.app_automate.appium.apps import UploadedApp
+from bsapi.app_automate.appium.responses import DeleteResponse
+from bsapi.app_automate.appium.sessions import Session
 
 
 class Build:
@@ -27,10 +25,10 @@ class Build:
         self.sub_group_id = sub_group_id
 
 
-class BuildsApi:
+class BuildsApi(Api):
 
-    @staticmethod
-    def recent_builds(limit=None, offset=None, status=None):
+    @classmethod
+    def recent_builds(cls, limit=None, offset=None, status=None):
         params = {}
         if limit is not None:
             params["limit"] = limit
@@ -40,7 +38,7 @@ class BuildsApi:
             params["status"] = status
         url = f"{Settings.base_url}/app-automate/builds.json"
 
-        response = requests.get(url, params=params, **Settings.request())
+        response = cls.http.get(url, params=params, **Settings.request())
 
         if response.status_code == 200:
             rj = response.json()
@@ -53,13 +51,13 @@ class BuildsApi:
         else:
             raise Exception(f"Invalid Status Code: {response.status_code}")
 
-    @staticmethod
-    def details(build_id=None):
+    @classmethod
+    def details(cls, build_id=None):
         if build_id is None:
             raise ValueError("Build ID is required")
 
         url = f"{Settings.base_url}/app-automate/builds/{build_id}/sessions.json"
-        response = requests.get(url, **Settings.request())
+        response = cls.http.get(url, **Settings.request())
 
         if response.status_code == 200:
             rj = response.json()
@@ -97,13 +95,13 @@ class BuildsApi:
         else:
             raise Exception(f"Invalid Status Code: {response.status_code}")
 
-    @staticmethod
-    def delete(build_id=None):
+    @classmethod
+    def delete(cls, build_id=None):
         if build_id is None:
             raise ValueError("Build ID is required")
 
         url = f"{Settings.base_url}/app-automate/builds/{build_id}.json"
-        response = requests.delete(url, **Settings.request())
+        response = cls.http.delete(url, **Settings.request())
 
         if response.status_code == 200:
             rj = response.json()

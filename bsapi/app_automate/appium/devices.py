@@ -1,6 +1,4 @@
-import requests
-
-from browserstack_api.settings import Settings
+from bsapi import Settings, Api
 
 
 class Device:
@@ -11,13 +9,13 @@ class Device:
         self.real_mobile = real_mobile
 
 
-class DeviceApi:
+class DeviceApi(Api):
 
-    @staticmethod
-    def get_device_list():
+    @classmethod
+    def get_device_list(cls):
         url = f"{Settings.base_url}/app-automate/devices.json"
 
-        response = requests.get(url, **Settings.request())
+        response = cls.http.get(url, **Settings.request())
 
         if response.status_code == 200:
             rj = response.json()

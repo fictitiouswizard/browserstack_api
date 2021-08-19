@@ -1,8 +1,11 @@
-import requests
+from bsapi import Settings, Api
+from bsapi.app_automate.appium.responses import DeleteResponse
+from bsapi.app_automate.appium.apps import UploadedApp
 
-from browserstack_api import Settings
-from browserstack_api.app_automate.appium.responses import DeleteResponse
-from browserstack_api.app_automate.appium.apps import UploadedApp
+
+class SessionStatus:
+    passed = "passed"
+    failed = "failed"
 
 
 class Session:
@@ -43,52 +46,52 @@ class AppProfilingData:
         self.temperature = temp
 
 
-class SessionApi:
+class SessionsApi(Api):
 
-    @staticmethod
-    def details(session_id=None):
+    @classmethod
+    def details(cls, session_id=None):
         if session_id is None:
             raise ValueError("Session ID is required")
 
         url = f"{Settings.base_url}/app-automate/sessions/{session_id}.json"
 
-        response = requests.get(url, **Settings.request())
+        response = cls.http.get(url, **Settings.request())
 
         if response.status_code == 200:
             rj = response.json()["automation_session"]
 
             return Session(
-                name=rj["name"],
-                duration=rj["duration"],
-                os=rj["os"],
-                os_version=rj["os_version"],
-                browser_version=rj["browser_version"],
-                browser=rj["browser"],
-                device=rj["device"],
-                status=rj["status"],
-                hashed_id=rj["hashed_id"],
-                reason=rj["reason"],
-                build_name=rj["build_name"],
-                project_name=rj["project_name"],
-                logs=rj["logs"],
-                browser_url=rj["browser_url"],
-                public_url=rj["public_url"],
-                appium_logs_url=rj["appium_logs_url"],
-                video_url=rj["video_url"],
-                device_logs_url=rj["device_logs_url"],
+                name=rj["name"] if "name" in rj else None,
+                duration=rj["duration"] if "duration" in rj else None,
+                os=rj["os"] if "os" in rj else None,
+                os_version=rj["os_version"] if "os_version" in rj else None,
+                browser_version=rj["browser_version"] if "browser_version" in rj else None,
+                browser=rj["browser"] if "browser" in rj else None,
+                device=rj["device"] if "device" in rj else None,
+                status=rj["status"] if "status" in rj else None,
+                hashed_id=rj["hashed_id"] if "hashed_id" in rj else None,
+                reason=rj["reason"] if "reason" in rj else None,
+                build_name=rj["build_name"] if "build_name" in rj else None,
+                project_name=rj["project_name"] if "project_name" in rj else None,
+                logs=rj["logs"] if "logs" in rj else None,
+                browser_url=rj["browser_url"] if "browser_url" in rj else None,
+                public_url=rj["public_url"] if "public_url" in rj else None,
+                appium_logs_url=rj["appium_logs_url"] if "appium_logs_url" in rj else None,
+                video_url=rj["video_url"] if "video_url" in rj else None,
+                device_logs_url=rj["device_logs_url"] if "device_logs_url" in rj else None,
                 app_details=UploadedApp(
-                    app_url=rj["app_details"]["app_url"],
-                    app_name=rj["app_details"]["app_name"],
-                    app_version=rj["app_details"]["app_version"],
-                    custom_id=rj["app_details"]["app_custom_id"],
-                    uploaded_at=rj["app_details"]["uploaded_at"]
+                    app_url=rj["app_details"]["app_url"] if "app_url" in rj["app_details"] else None,
+                    app_name=rj["app_details"]["app_name"] if "app_name" in rj["app_details"] else None,
+                    app_version=rj["app_details"]["app_version"] if "app_version" in rj["app_details"] else None,
+                    custom_id=rj["app_details"]["app_custom_id"] if "app_custom_id" in rj["app_details"] else None,
+                    uploaded_at=rj["app_details"]["uploaded_at"] if "uploaded_at" in rj["app_details"] else None
                 )
             )
         else:
             response.raise_for_status()
 
-    @staticmethod
-    def update_status(session_id=None, status=None, reason=None):
+    @classmethod
+    def update_status(cls, session_id=None, status=None, reason=None):
         if session_id is None:
             raise ValueError("Session ID is required")
         if status is None:
@@ -100,35 +103,35 @@ class SessionApi:
         if reason is not None:
             data["reason"] = reason
 
-        response = requests.put(url, json=data, **Settings.request())
+        response = cls.http.put(url, json=data, **Settings.request())
 
         if response.status_code == 200:
             rj = response.json()["automation_session"]
             return Session(
-                name=rj["name"],
-                duration=rj["duration"],
-                os=rj["os"],
-                os_version=["os_version"],
-                browser_version=rj["browser_version"],
-                browser=rj["browser"],
-                device=rj["device"],
-                status=rj["status"],
-                hashed_id=rj["hashed_id"],
-                reason=rj["reason"],
-                build_name=rj["build_name"],
-                project_name=rj["project_name"]
+                name=rj["name"] if "name" in rj else None,
+                duration=rj["duration"] if "duration" in rj else None,
+                os=rj["os"] if "os" in rj else None,
+                os_version=rj["os_version"] if "os_version" in rj else None,
+                browser_version=rj["browser_version"] if "browser_version" in rj else None,
+                browser=rj["browser"] if "browser" in rj else None,
+                device=rj["device"] if "device" in rj else None,
+                status=rj["status"] if "status" in rj else None,
+                hashed_id=rj["hashed_id"] if "hashed_id" in rj else None,
+                reason=rj["reason"] if "reason" in rj else None,
+                build_name=rj["build_name"] if "build_name" in rj else None,
+                project_name=rj["project_name"] if "project_name" in rj else None
             )
         else:
             response.raise_for_status()
 
-    @staticmethod
-    def delete(session_id=None):
+    @classmethod
+    def delete(cls, session_id=None):
         if session_id is None:
             raise ValueError("Session ID is required")
 
         url = f"{Settings.base_url}/app-automate/sessions/{session_id}.json"
 
-        response = requests.delete(url, **Settings.request())
+        response = cls.http.delete(url, **Settings.request())
 
         if response.status_code == 200:
             rj = response.json()
@@ -139,40 +142,38 @@ class SessionApi:
         else:
             response.raise_for_status()
 
-    @staticmethod
-    def get_text_logs(build_id=None, session_id=None):
+    @classmethod
+    def get_text_logs(cls, build_id=None, session_id=None):
         if build_id is None:
             raise ValueError("Build ID is required")
         if session_id is None:
             raise ValueError("Session ID is required")
 
         url = f"{Settings.base_url}/app-automate/builds/{build_id}/sessions/{session_id}/logs"
-
-        response = requests.get(url, stream=True, **Settings.request())
+        response = cls.http.get(url, stream=True, **Settings.request())
 
         if response.status_code == 200:
             return response
         else:
             response.raise_for_status()
 
-    @staticmethod
-    def get_device_logs(build_id=None, session_id=None):
+    @classmethod
+    def get_device_logs(cls, build_id=None, session_id=None):
         if build_id is None:
             raise ValueError("Build ID is required")
         if session_id is None:
             raise ValueError("Session ID is required")
 
         url = f"{Settings.base_url}/app-automate/builds/{build_id}/sessions/{session_id}/devicelogs"
-
-        response = requests.get(url, stream=True, **Settings.request())
+        response = cls.http.get(url, stream=True, **Settings.request())
 
         if response.status_code == 200:
             return response
         else:
             response.raise_for_status()
 
-    @staticmethod
-    def get_appium_logs(build_id=None, session_id=None):
+    @classmethod
+    def get_appium_logs(cls, build_id=None, session_id=None):
         if build_id is None:
             raise ValueError("Build ID is required")
         if session_id is None:
@@ -180,15 +181,15 @@ class SessionApi:
 
         url = f"{Settings.base_url}/app-automate/builds/{build_id}/sessions/{session_id}/appiumlogs"
 
-        response = requests.get(url, stream=True, **Settings.request())
+        response = cls.http.get(url, stream=True, **Settings.request())
 
         if response.status_code == 200:
             return response
         else:
             response.raise_for_status()
 
-    @staticmethod
-    def get_network_logs(build_id=None, session_id=None):
+    @classmethod
+    def get_network_logs(cls, build_id=None, session_id=None):
         if build_id is None:
             raise ValueError("Build ID is required")
         if session_id is None:
@@ -196,15 +197,15 @@ class SessionApi:
 
         url = f"{Settings.base_url}/app-automate/builds/{build_id}/sessions/{session_id}/networklogs"
 
-        response = requests.get(url, stream=True, **Settings.request())
+        response = cls.http.get(url, stream=True, **Settings.request())
 
         if response.status_code == 200:
             return response
         else:
             response.raise_for_status()
 
-    @staticmethod
-    def get_profiling_data(build_id=None, session_id=None):
+    @classmethod
+    def get_profiling_data(cls, build_id=None, session_id=None):
         if build_id is None:
             raise ValueError("Build ID is required")
         if session_id is None:
@@ -212,7 +213,7 @@ class SessionApi:
 
         url = f"{Settings.base_url}/app-automate/builds/{build_id}/sessions/{session_id}/appprofiling"
 
-        response = requests.get(url, **Settings.request())
+        response = cls.http.get(url, **Settings.request())
 
         if response.status_code == 200:
             rj = response.json()
