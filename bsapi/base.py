@@ -17,8 +17,19 @@ def configure_sessions(retries, backoff):
 
 
 class Api:
+    """
+    Base class to inherit requests configuration from
+    """
     http = configure_sessions(8, 1)
 
     @classmethod
     def set_timeout(cls, retries, backoff_factor):
+        """
+        Set the number of times to try http requests
+
+        :param retries:
+        :type retries: int
+        :param backoff_factor:
+        :type retries: int
+        """
         cls.session = configure_sessions(retries, backoff_factor)
