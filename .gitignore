@@ -3,4 +3,7 @@ venv
 .idea
 bin
 
+*.egg-info
+dist
+
 docs/_build

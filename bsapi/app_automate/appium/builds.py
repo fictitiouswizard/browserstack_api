@@ -5,6 +5,22 @@ from bsapi.app_automate.appium.sessions import Session
 
 
 class Build:
+    """
+    :var str build_id: Unique ID for the build
+    :var str name: Build name
+    :var str duration:
+    :var str status:
+    :var str tags:
+    :var str group_id:
+    :var str user_id:
+    :var automation_project_id:
+    :var str created_at:
+    :var str updated_at:
+    :var str hashed_id:
+    :var str delta:
+    :var str test_data:
+    :var str sub_group_id:
+    """
     def __init__(self, build_id=None, name=None, duration=None, status=None, tags=None,
                  group_id=None, user_id=None, automation_project_id=None, created_at=None,
                  updated_at=None, hashed_id=None, delta=None, test_data=None,
@@ -26,9 +42,25 @@ class Build:
 
 
 class BuildsApi(Api):
+    """
+    Class for interacting with the Builds REST endpoint
+    """
 
     @classmethod
     def recent_builds(cls, limit=None, offset=None, status=None):
+        """
+        Fetch Recent builds from BrowserStack
+
+        Example::
+
+            builds = BuildsApi.recent_builds(limit=5)
+
+        :param int limit:
+        :param int offset:
+        :param int status:
+        :return: Returns a list of Builds
+        :rtype: list[:class:`bsapi.app_automate.appium.builds.Build`]
+        """
         params = {}
         if limit is not None:
             params["limit"] = limit
@@ -53,6 +85,21 @@ class BuildsApi(Api):
 
     @classmethod
     def details(cls, build_id=None):
+        """
+        Retrieve recent sessions for a build
+
+        Example::
+
+            builds = BuildsApi.recent_builds(limit=5)
+            for build in builds:
+                sessions = BuildsApi.details(build.hashed_id)
+                for session in sessions:
+                    print(f"{session.name} - {session.status}"
+
+        :param str build_id:
+        :return: A list of Sessions
+        :rtype: list[:class:`bsapi.app_automate.appium.sessions.Session`]
+        """
         if build_id is None:
             raise ValueError("Build ID is required")
 
@@ -97,6 +144,21 @@ class BuildsApi(Api):
 
     @classmethod
     def delete(cls, build_id=None):
+        """
+        Delete a build from BrowserStack.  Removing a build will remove all sessions associated with it.
+
+        Example::
+
+            builds = BuildsApi.recent_builds()
+            if len(builds) > 0:
+                build = builds[0]
+                response = BuildsApi.delete(build.hashed_id)
+                if response.status == "ok":
+                    print("The build was deleted")
+
+        :param build_id:
+        :return:
+        """
         if build_id is None:
             raise ValueError("Build ID is required")
 

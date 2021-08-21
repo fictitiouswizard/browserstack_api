@@ -42,6 +42,7 @@ class AppsApi(Api):
     """
     Class for interacting with the Apps REST endpoint
     """
+
     @classmethod
     def upload_app(cls, file=None, url=None, custom_id=None):
         """
@@ -181,7 +182,7 @@ class AppsApi(Api):
 
             apps = AppsApi.uploaded_apps()
             if len(apps) > 0:
-                app = [a for a in apps][0]
+                app = apps[0]
                 response = AppsApi.delete_app(app.app_id)
                 if response:
                     print("The app was deleted")
