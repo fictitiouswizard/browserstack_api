@@ -131,7 +131,7 @@ class Session:
         Example::
 
             session = Session.by_id(session_id)
-            with open("session.log", "w") as f:
+            with open("session.log", "wb") as f:
                 with session.get_logs() as r:
                     f.write(r.content)
 
@@ -160,7 +160,7 @@ class Session:
         if filename is None:
             raise ValueError("File name is required")
 
-        with open(filename, "w") as f:
+        with open(filename, "wb") as f:
             with self.get_session_logs() as response:
                 f.write(response.content)
 
@@ -172,7 +172,7 @@ class Session:
 
             session = Session.by_id(session_id)
             with session.get_appium_logs() as response:
-                with open("appium.log", "w") as f:
+                with open("appium.log", "wb") as f:
                     f.write(response.content)
 
         :return: Response object containing the Appium Logs
@@ -199,7 +199,7 @@ class Session:
             raise ValueError("File name is required")
 
         with self.get_appium_logs() as response:
-            with open(filename, "w") as f:
+            with open(filename, "wb") as f:
                 f.write(response.content)
 
     def get_device_logs(self):
@@ -210,7 +210,7 @@ class Session:
 
             session = Session.by_id(session_id)
             with session.get_device_logs() as response:
-                with open("device.log", "w") as f:
+                with open("device.log", "wb") as f:
                     f.write(response.content)
 
         :return: Response object containing the Device logs from BrowserStack
@@ -238,7 +238,7 @@ class Session:
             raise ValueError("File name is required")
 
         with self.get_device_logs() as response:
-            with open(filename, "w") as f:
+            with open(filename, "wb") as f:
                 f.write(response.content)
 
     def get_network_logs(self):
@@ -249,7 +249,7 @@ class Session:
 
             session = Session.by_id(session_id)
             with session.get_network_logs() as response:
-                with open("network.log", "w") as f:
+                with open("network.log", "wb") as f:
                     f.write(response.content)
 
         :return: Response object containing the Network logs for BrowserStack
@@ -276,7 +276,7 @@ class Session:
             raise ValueError("File name is required")
 
         with self.get_network_logs() as response:
-            with open(filename, "w") as f:
+            with open(filename, "wb") as f:
                 f.write(response.content)
 
     def get_video(self):
@@ -287,7 +287,7 @@ class Session:
 
             session = Session.by_id(session_id)
             with session.get_video() as response:
-                with open("BrowserStack.mp4", "w") as f:
+                with open("BrowserStack.mp4", "wb") as f:
                     f.write(response.content)
 
         :return: Response object containing the Video recording for the BrowserStack session
@@ -315,7 +315,7 @@ class Session:
             raise ValueError("File name is required")
 
         with self.get_video() as response:
-            with open(filename, "w") as f:
+            with open(filename, "wb") as f:
                 f.write(response.content)
 
 

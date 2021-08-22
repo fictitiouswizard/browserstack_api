@@ -1,3 +1,4 @@
+import os.path
 import unittest
 
 from appium import webdriver
@@ -11,18 +12,123 @@ from bsapi.app_automate.appium.sessions import SessionStatus, Session
 
 
 class TestSession(unittest.TestCase):
-
+    app = None
     session_id = None
 
+    @classmethod
     def setUpClass(cls) -> None:
-        pass
+        uploaded_app = AppsApi.upload_app("./bin/Calculator.apk", custom_id="Calc")
+        app = AppsApi.uploaded_apps(uploaded_app.custom_id)[0]
+        cls.app = app
 
+        desired_caps = {
+            "build": "Python Android",
+            "device": "Samsung Galaxy S8 Plus",
+            "app": app.app_url,
+            "project": "BrowserStack Rest API",
+            "browserstack.networkLogs": "true",
+            "browserstack.deviceLogs": "true",
+            "browserstack.appiumLogs": "true",
+            "browserstack.video": "true"
+        }
+
+        url = f"https://{Settings.username}:{Settings.password}@hub-cloud.browserstack.com/wd/hub"
+
+        driver = webdriver.Remote(url, desired_caps)
+        cls.session_id = driver.session_id
+        driver.quit()
+
+    @classmethod
     def tearDownClass(cls) -> None:
-        pass
+        AppsApi.delete_app(cls.app.app_id)
+        builds = BuildsApi.recent_builds()
+        for build in builds:
+            BuildsApi.delete(build.hashed_id)
+        projects = ProjectsApi.recent_projects()
+        for project in projects:
+            ProjectsApi.delete(project.project_id)
 
     def test_session_by_id(self):
         session = Session.by_id(TestSession.session_id)
         self.assertEqual(session.hashed_id, TestSession.session_id)
+
+    def test_build(self):
+        session = Session.by_id(TestSession.session_id)
+        self.assertEqual(session.build.name, "Python Android")
+
+    def test_project(self):
+        session = Session.by_id(TestSession.session_id)
+        self.assertEqual(session.project.name, "BrowserStack Rest API")
+
+    def test_get_session_logs(self):
+        session = Session.by_id(TestSession.session_id)
+        with session.get_session_logs() as response:
+            self.assertGreater(len(response.content), 0)
+
+    def test_get_appium_logs(self):
+        session = Session.by_id(TestSession.session_id)
+        with session.get_appium_logs() as response:
+            self.assertGreater(len(response.content), 0)
+
+    def test_get_device_logs(self):
+        session = Session.by_id(TestSession.session_id)
+        with session.get_device_logs() as response:
+            self.assertGreater(len(response.content), 0)
+
+    def test_get_network_logs(self):
+        session = Session.by_id(TestSession.session_id)
+        with session.get_network_logs() as response:
+            self.assertGreater(len(response.content), 0)
+
+    def test_get_video(self):
+        session = Session.by_id(TestSession.session_id)
+        with session.get_video() as response:
+            self.assertGreater(len(response.content), 0)
+
+    def test_save_session_logs(self):
+        session = Session.by_id(TestSession.session_id)
+        session.save_session_logs("./session.log")
+        if os.path.isfile("./session.log"):
+            os.remove("./session.log")
+            self.assertTrue(True)
+        else:
+            self.fail()
+
+    def test_save_appium_logs(self):
+        session = Session.by_id(TestSession.session_id)
+        session.save_appium_logs("./appium.log")
+        if os.path.isfile("./appium.log"):
+            os.remove("./appium.log")
+            self.assertTrue(True)
+        else:
+            self.fail()
+
+    def test_save_device_logs(self):
+        session = Session.by_id(TestSession.session_id)
+        session.save_device_logs("./device.log")
+        if os.path.isfile("./device.log"):
+            os.remove("./device.log")
+            self.assertTrue(True)
+        else:
+            self.fail()
+
+    def test_save_network_logs(self):
+        session = Session.by_id(TestSession.session_id)
+        session.save_network_logs("./network.log")
+        if os.path.isfile("./network.log"):
+            os.remove("./network.log")
+            self.assertTrue(True)
+        else:
+            self.fail()
+
+    def test_save_video(self):
+        session = Session.by_id(TestSession.session_id)
+        session.save_video("./session.mp4")
+        if os.path.isfile("./session.mp4"):
+            os.remove("./session.mp4")
+            self.assertTrue(True)
+        else:
+            self.fail()
 
 
 class TestSessionsApi(unittest.TestCase):
@@ -107,6 +213,18 @@ def session_test_suite():
     suite = unittest.TestSuite()
 
     suite.addTest(TestSession("test_session_by_id"))
+    suite.addTest(TestSession("test_build"))
+    suite.addTest(TestSession("test_project"))
+    suite.addTest(TestSession("test_get_session_logs"))
+    suite.addTest(TestSession("test_get_appium_logs"))
+    suite.addTest(TestSession("test_get_device_logs"))
+    suite.addTest(TestSession("test_get_network_logs"))
+    suite.addTest(TestSession("test_get_video"))
+    suite.addTest(TestSession("test_save_session_logs"))
+    suite.addTest(TestSession("test_save_appium_logs"))
+    suite.addTest(TestSession("test_save_device_logs"))
+    suite.addTest(TestSession("test_save_network_logs"))
+    suite.addTest(TestSession("test_save_video"))
 
     return suite
 
