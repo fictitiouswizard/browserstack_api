@@ -178,6 +178,23 @@ class Session:
         else:
             response.raise_for_status()
 
+    def save_appium_logs(self, filename=None):
+        """
+        Save the appium logs to the file system
+
+        Example::
+            session = Session.by_id(session_id)
+            session.save_appium_logs("appium.log")
+
+        :param filename:
+        """
+        if filename is None:
+            raise ValueError("File name is required")
+
+        with self.get_appium_logs() as response:
+            with open(filename, "w") as f:
+                f.write(response.content)
+
     def get_device_logs(self):
         """
         Get the Appium logs from BrowserStack for the Session
@@ -199,6 +216,24 @@ class Session:
         else:
             response.raise_for_status()
 
+    def save_device_logs(self, filename=None):
+        """
+        Save the device logs to the file system
+
+        Example::
+
+            session = Session.by_id(session_id)
+            session.save_device_logs("device.log")
+
+        :param filename:
+        """
+        if filename is None:
+            raise ValueError("File name is required")
+
+        with self.get_device_logs() as response:
+            with open(filename, "w") as f:
+                f.write(response.content)
+
     def get_network_logs(self):
         """
         Get the Network logs from BrowserStack for the Session
@@ -219,6 +254,24 @@ class Session:
         else:
             response.raise_for_status()
 
+    def save_network_logs(self, filename=None):
+        """
+        Save the network logs to the file system
+
+        Example::
+
+            session = Session.by_id(session_id)
+            session.save_network_logs("network.log")
+
+        :param filename:
+        """
+        if filename is None:
+            raise ValueError("File name is required")
+
+        with self.get_network_logs() as response:
+            with open(filename, "w") as f:
+                f.write(response.content)
+
     def get_video(self):
         """
         Get the video from BrowserStack for the Session
@@ -238,6 +291,25 @@ class Session:
             return response
         else:
             response.raise_for_status()
+
+    def save_video(self, filename=None):
+        """
+        Save the video of the session to the file system
+
+        Example::
+
+            session = Session.by_id(session_id)
+            session.save_video("BrowserStack.mp4")
+
+
+        :param filename:
+        """
+        if filename is None:
+            raise ValueError("File name is required")
+
+        with self.get_video() as response:
+            with open(filename, "w") as f:
+                f.write(response.content)
 
 
 class AppProfilingData:
