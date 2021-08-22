@@ -7,5 +7,9 @@ Appium
    :caption: content:
 
    apps
+   projects
    builds
    sessions
+   devices
+   plans
+   responses

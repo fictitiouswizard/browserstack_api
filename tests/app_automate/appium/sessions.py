@@ -7,7 +7,22 @@ from bsapi.app_automate.appium import AppsApi
 from bsapi.app_automate.appium import BuildsApi
 from bsapi.app_automate.appium import ProjectsApi
 from bsapi.app_automate.appium import SessionsApi
-from bsapi.app_automate.appium.sessions import SessionStatus
+from bsapi.app_automate.appium.sessions import SessionStatus, Session
+
+
+class TestSession(unittest.TestCase):
+
+    session_id = None
+
+    def setUpClass(cls) -> None:
+        pass
+
+    def tearDownClass(cls) -> None:
+        pass
+
+    def test_session_by_id(self):
+        session = Session.by_id(TestSession.session_id)
+        self.assertEqual(session.hashed_id, TestSession.session_id)
 
 
 class TestSessionsApi(unittest.TestCase):
@@ -86,6 +101,14 @@ class TestSessionsApi(unittest.TestCase):
         session_id = TestSessionsApi.session_id
         profiling_data = SessionsApi.get_profiling_data(build_id, session_id)
         self.assertGreater(len(profiling_data), 0)
+
+
+def session_test_suite():
+    suite = unittest.TestSuite()
+
+    suite.addTest(TestSession("test_session_by_id"))
+
+    return suite
 
 
 def sessions_api_test_suite():

@@ -6,6 +6,12 @@ from .builds import BuildsApi
 
 
 class SessionStatus:
+    """
+    Represents the Session Status options
+
+    :param str passed: Passed
+    :param str failed: Failed
+    """
     passed = "passed"
     failed = "failed"
 
@@ -183,6 +189,7 @@ class Session:
         Save the appium logs to the file system
 
         Example::
+
             session = Session.by_id(session_id)
             session.save_appium_logs("appium.log")
 
@@ -313,6 +320,16 @@ class Session:
 
 
 class AppProfilingData:
+    """
+    App profiling data entry
+
+    :param str timestamp:
+    :param str cpu:
+    :param str memory:
+    :param str memory_available:
+    :param str battery:
+    :param str temperature:
+    """
     def __init__(self, ts=None, cpu=None, mem=None, mema=None, batt=None,
                  temp=None):
         self.timestamp = ts
@@ -324,9 +341,23 @@ class AppProfilingData:
 
 
 class SessionsApi(Api):
-
+    """
+    Wrapper around the Sessions endpoint
+    """
     @classmethod
     def details(cls, session_id=None):
+        """
+        Get the details for a session provided the ID
+
+        Example::
+
+            session = SessionsApi.details(session_id)
+
+
+        :param session_id: the hashed id for the session
+        :return: Session Object
+        :rtype: :class:`bsapi.app_automate.appium.sessions.Session`
+        """
         if session_id is None:
             raise ValueError("Session ID is required")
 
@@ -369,6 +400,19 @@ class SessionsApi(Api):
 
     @classmethod
     def update_status(cls, session_id=None, status=None, reason=None):
+        """
+        Update the status of a session
+
+        Example::
+
+            session = SessionsApi(session_id, SessionStatus.passed)
+
+        :param session_id: The session id
+        :param status: The new status
+        :type status: :class:`bsapi.app_automate.appium.sessions.SessionStatus`
+        :param reason: reason for the new status
+        :return: Updated Session object
+        """
         if session_id is None:
             raise ValueError("Session ID is required")
         if status is None:
@@ -403,6 +447,19 @@ class SessionsApi(Api):
 
     @classmethod
     def delete(cls, session_id=None):
+        """
+        Delete the session from BrowserStack
+
+        Example::
+
+            response = SessionApi.delete(session_id)
+            if response.status == "ok":
+                print("The session has been deleted")
+
+        :param session_id: The unique id for the session
+        :return: delete status message
+        :rtype: :class:`bsapi.app_automate.appium.responses.DeleteResponse`
+        """
         if session_id is None:
             raise ValueError("Session ID is required")
 
@@ -421,6 +478,20 @@ class SessionsApi(Api):
 
     @classmethod
     def get_text_logs(cls, build_id=None, session_id=None):
+        """
+        Get the BrowserStack logs for the session
+
+        Example::
+
+            with SessionsApi.get_text_logs(build_id, session_id) as response:
+                with open("session.log", "w") as f:
+                    f.write(response.content)
+
+        :param build_id: the unique build id
+        :param session_id: the unique session id
+        :return: returns the raw response object for the request
+        :rtype: requests.Response
+        """
         if build_id is None:
             raise ValueError("Build ID is required")
         if session_id is None:
@@ -436,6 +507,20 @@ class SessionsApi(Api):
 
     @classmethod
     def get_device_logs(cls, build_id=None, session_id=None):
+        """
+        Get the device logs from BrowserStack
+
+        Example::
+
+            with SessionsApi.get_device_logs(build_id, session_id) as response:
+                with open("device.log", "w") as f:
+                    f.write(response.content)
+
+        :param build_id: The build id
+        :param session_id: the session id
+        :return: returns the raw response object for the request
+        :rtype: requests.Response
+        """
         if build_id is None:
             raise ValueError("Build ID is required")
         if session_id is None:
@@ -451,6 +536,20 @@ class SessionsApi(Api):
 
     @classmethod
     def get_appium_logs(cls, build_id=None, session_id=None):
+        """
+        Get the Appium logs from BrowserStack
+
+        Example::
+
+            with SessionsApi.get_appium_logs(build_id, session_id) as response:
+                with open("appium.log", "w") as f:
+                    f.write(response.content)
+
+        :param build_id: The build id
+        :param session_id: The session id
+        :return: The raw response object from the request
+        :rtype: requests.Response
+        """
         if build_id is None:
             raise ValueError("Build ID is required")
         if session_id is None:
@@ -467,6 +566,20 @@ class SessionsApi(Api):
 
     @classmethod
     def get_network_logs(cls, build_id=None, session_id=None):
+        """
+        Get the network logs from BrowserStack
+
+        Example::
+
+            with SessionsApi.get_network_logs(build_id, session_id) as response:
+                with open("network.json", "w") as f:
+                    f.write(response.content)
+
+        :param build_id: The build id
+        :param session_id: The session id
+        :return: The raw response object from the request
+        :rtype: requests.Response
+        """
         if build_id is None:
             raise ValueError("Build ID is required")
         if session_id is None:
@@ -483,6 +596,20 @@ class SessionsApi(Api):
 
     @classmethod
     def get_profiling_data(cls, build_id=None, session_id=None):
+        """
+        Get the profiling data from BrowserStack
+
+        Example::
+
+            profiling_data = SessionsApi.get_profiling_data(build_id, session_id)
+            for data_entry in profiling_data:
+                print(data_entry.mem)
+
+        :param build_id: The Build ID
+        :param session_id: The Session ID
+        :return: returns a list of profiling data entries
+        :rtype: list[:class:`bsapi.app_automate.appium.sessions.AppProfilingData`]
+        """
         if build_id is None:
             raise ValueError("Build ID is required")
         if session_id is None:

@@ -2,6 +2,16 @@ from bsapi import Settings, Api
 
 
 class AppAutomatePlan:
+    """
+    Plan information for the current user
+
+    :param str automate_plan:
+    :param str parallel_sessions_running:
+    :param str team_parallel_sessions_max_allowed:
+    :param str parallel_sessions_max_allowed:
+    :param str queued_sessions:
+    :param str queued_sessions_max_allowed:
+    """
     def __init__(self, automate_plan=None, parallel_sessions_running=None,
                  team_parallel_sessions_max_allowed=None,
                  parallel_sessions_max_allowed=None,
@@ -15,9 +25,20 @@ class AppAutomatePlan:
 
 
 class PlansApi(Api):
+    """Class for interacting with the Plans REST endpoint on BrowserStack"""
 
     @classmethod
     def details(cls):
+        """
+        Get the plan details for the current user
+
+        Example::
+
+            plan = PlansApi.details()
+
+        :return: The plan details for the current user
+        :rtype: :class:`bsapi.app_automate.appium.plans.AppAutomatePlan`
+        """
         url = f"{Settings.base_url}/app-automate/plan.json"
 
         response = cls.http.get(url, **Settings.request())
