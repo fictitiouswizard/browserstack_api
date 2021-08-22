@@ -4,6 +4,19 @@ from .responses import DeleteResponse
 
 
 class Project:
+    """
+    BrowserStack Project
+
+    :param str project_id:
+    :param str name:
+    :param str group_id:
+    :param str user_id:
+    :param str created_at:
+    :param str updated_at:
+    :param str sub_group_id:
+    :param builds:
+    :type builds: list[:class:`bsapi.app_automate.appium.builds.Build`]
+    """
     def __init__(self, project_id=None, name=None, group_id=None, user_id=None,
                  created_at=None, updated_at=None, sub_group_id=None, builds=None):
         self.project_id = project_id
@@ -20,6 +33,21 @@ class ProjectsApi(Api):
 
     @classmethod
     def recent_projects(cls, limit=None, offset=None, status=None):
+        """
+        Get recent projects from BrowserStack
+
+        Example::
+
+            projects = ProjectsApi.recent_projects(limit=20)
+            for project in projects:
+                print(project.name)
+
+        :param int limit: Number of items to return
+        :param int offset: Number of items to skip
+        :param str status: Return only items in this status
+        :return: List of recent projects
+        :rtype: list[:class:`Project`]
+        """
         url = f"{Settings.base_url}/app-automate/projects.json"
 
         params = {}
@@ -53,6 +81,22 @@ class ProjectsApi(Api):
 
     @classmethod
     def details(cls, project_id=None):
+        """
+        Get the details for a project including recent builds
+
+        Example::
+
+            projects = ProjectsApi.get_recent()
+            for project in projects:
+                project = ProjectsApi.details(project.project_id)
+                for build in project.builds:
+                    print(f"{project.name} - {build.name}: {build.status}")
+
+
+        :param project_id: Project ID
+        :return: Project including recent builds
+        :rtype: :class:`Project`
+        """
         if project_id is None:
             raise ValueError("Project ID cannot be None")
 
@@ -95,6 +139,20 @@ class ProjectsApi(Api):
 
     @classmethod
     def update_project_name(cls, project_id=None, name=None):
+        """
+        Update the name of the project on BrowserStack
+
+        Example::
+
+            projects = ProjectsApi.recent_projects()
+            project = [p for p in projects if p.name = "My Test Project"][0]
+            updated_project = ProjectsApi.update_project_name(project.project_id, "New Test Project Name")
+
+        :param project_id: Project ID
+        :param name: New name for the project
+        :return: updated project
+        :rtype: :class:`Project`
+        """
         if project_id is None:
             raise ValueError("Project ID is required")
         if name is None:
@@ -121,6 +179,20 @@ class ProjectsApi(Api):
 
     @classmethod
     def status_badge_key(cls, project_id=None):
+        """
+        Get the status badge for the project
+
+        Example::
+
+            projects = ProjectsApi.recent_projects()
+            project = [p for p in projects if p.name == "My Project"][0]
+            badge_key = ProjectsApi.get_badge_key(project.project_id)
+            badge_markdown = f"[![BrowserStack Status](https://app-automate.browserstack.com/badge.svg?badge_key=<badge_key>)](https://app-automate.browserstack.com/public-build/{badge_key}?redirect=true)"
+
+        :param project_id: Project ID
+        :return: Status Badge Key
+        :rtype: str
+        """
         if project_id is None:
             raise ValueError("Project ID is required")
 
@@ -134,6 +206,28 @@ class ProjectsApi(Api):
 
     @classmethod
     def delete(cls, project_id=None):
+        """
+        Delete the project from BrowserStack.  **You must remove all builds from the project first.**
+
+        Example::
+
+            project = ProjectsApi.details(project_id)
+            for build in project.builds:
+                message = BuildsApi.delete(build.hashed_id)
+                if message.status == "ok":
+                    print(f"Deleted: {build.name}")
+                else:
+                    print(f"{build.name} - {message.message}"
+            message = ProjectsApi.delete(project_id)
+            if message.status == "ok":
+                print(f"{project.name} has been deleted")
+            else:
+                print(f"{project.name} - {message.message}"
+
+        :param project_id: Project ID to be deleted
+        :return: Deleted response message
+        :rtype: :class:`.responses.DeleteResponse`
+        """
         if project_id is None:
             raise ValueError("Project ID is required")
 
