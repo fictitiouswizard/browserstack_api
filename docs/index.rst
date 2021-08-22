@@ -8,12 +8,11 @@ Welcome to bsapi's documentation!
 
 .. toctree::
    :maxdepth: 2
-   :caption: App Automate:
+   :caption: Content:
 
-   app_automate/appium/apps
-   app_automate/appium/builds
+   app_automate/index
 
-Things and stuff
+
 
 
 Indices and tables

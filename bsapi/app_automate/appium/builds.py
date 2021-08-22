@@ -1,7 +1,6 @@
 from bsapi import Settings, Api
-from bsapi.app_automate.appium.apps import UploadedApp
-from bsapi.app_automate.appium.responses import DeleteResponse
-from bsapi.app_automate.appium.sessions import Session
+from .apps import UploadedApp
+from .responses import DeleteResponse
 
 
 class Build:
@@ -102,6 +101,8 @@ class BuildsApi(Api):
         """
         if build_id is None:
             raise ValueError("Build ID is required")
+
+        from .sessions import Session
 
         url = f"{Settings.base_url}/app-automate/builds/{build_id}/sessions.json"
         response = cls.http.get(url, **Settings.request())

@@ -1,6 +1,8 @@
 from bsapi import Settings, Api
-from bsapi.app_automate.appium.responses import DeleteResponse
-from bsapi.app_automate.appium.apps import UploadedApp
+from .responses import DeleteResponse
+from .apps import UploadedApp
+from .projects import ProjectsApi
+from .builds import BuildsApi
 
 
 class SessionStatus:
@@ -9,6 +11,34 @@ class SessionStatus:
 
 
 class Session:
+    """
+    BrowserStack Session
+
+    :param str name:
+    :param str duration:
+    :param str os:
+    :param str os_version:
+    :param str browser_version:
+    :param str browser:
+    :param str device:
+    :param str status:
+    :param str hashed_id:
+    :param str reason:
+    :param str build_name:
+    :param str project_name:
+    :param str logs:
+    :param str browser_url:
+    :param str public_url:
+    :param str appium_logs_url:
+    :param str video_url:
+    :param str device_logs_url:
+    :param app_details:
+    :type app_details: :class:`bsapi.app_automate.appium.apps.UploadedApp`
+    :param build:
+    :type build: :class:`bsapi.app_automate.appium.builds.Build`
+    :param project:
+    :type project: :class:`bsapi.app_automate.appium.projects.Project`
+    """
     def __init__(self, name=None, duration=None, os=None, os_version=None,
                  browser_version=None, browser=None, device=None, status=None,
                  hashed_id=None, reason=None, build_name=None, project_name=None,
@@ -33,6 +63,181 @@ class Session:
         self.video_url = video_url
         self.device_logs_url = device_logs_url
         self.app_details = app_details
+        self._build = None
+        self._project = None
+
+    @property
+    def build(self):
+        if self._build is None:
+            offset = 0
+            builds = BuildsApi.recent_builds(20, offset)
+            filtered_builds = [b for b in builds if b.name == self.build_name]
+            while len(filtered_builds) < 1:
+                offset += 20
+                builds = BuildsApi.recent_builds(20, offset)
+                if len(builds) == 0:
+                    raise Exception()
+                filtered_builds = [b for b in builds if b.name == self.build_name]
+            self._build = filtered_builds[0]
+        return self._build
+
+    @property
+    def project(self):
+        if self._project is None:
+            offset = 0
+            projects = ProjectsApi.recent_projects(20, offset)
+            filtered_projects = [p for p in projects if p.name == self.project_name]
+            while len(filtered_projects) < 1:
+                offset += 20
+                projects = ProjectsApi.recent_projects(20, offset)
+                if len(projects) == 0:
+                    raise Exception()
+                filtered_projects = [p for p in projects if p.name == self.project_name]
+            self._project = filtered_projects[0]
+        return self._project
+
+    @staticmethod
+    def by_id(session_id=None):
+        """
+        Get the Session for the given ID
+
+        Example::
+
+            driver = webdriver.Remote(url, desired_caps)
+            session_id = driver.session_id
+            driver.quit()
+
+            session = Session.by_id(session_id)
+
+        :param str session_id: Unique Session ID
+        :return: :class:`bsapi.app_automate.appium.sessions.Session`
+        """
+        if session_id is None:
+            raise ValueError("Session ID is required")
+
+        session = SessionsApi.details(session_id)
+        return session
+
+    def get_session_logs(self):
+        """
+        Get the Session logs from BrowserStack
+
+        Example::
+
+            session = Session.by_id(session_id)
+            with open("session.log", "w") as f:
+                with session.get_logs() as r:
+                    f.write(r.content)
+
+
+        :return: Response object containing the session logs from BrowserStack
+        :rtype: requests.Response
+        """
+        response = Api.http.get(self.logs, stream=True, **Settings.request())
+        if response.status_code == 200:
+            return response
+        else:
+            response.raise_for_status()
+
+    def save_session_logs(self, filename=None):
+        """
+        Download the session logs from BrowserStack to the file name
+
+        Example::
+
+            session = Session.by_id(session_id)
+            session.save_session_logs("session.log")
+
+        :param filename: File name for the logs to be saved to
+        :return: None
+        """
+        if filename is None:
+            raise ValueError("File name is required")
+
+        with open(filename, "w") as f:
+            with self.get_session_logs() as response:
+                f.write(response.content)
+
+    def get_appium_logs(self):
+        """
+        Get the Appium logs from BrowserStack for the Session
+
+        Example::
+
+            session = Session.by_id(session_id)
+            with session.get_appium_logs() as response:
+                with open("appium.log", "w") as f:
+                    f.write(response.content)
+
+        :return: Response object containing the Appium Logs
+        :rtype: requests.Response
+        """
+        response = Api.http.get(self.appium_logs_url, stream=True, **Settings.request())
+        if response.status_code == 200:
+            return response
+        else:
+            response.raise_for_status()
+
+    def get_device_logs(self):
+        """
+        Get the Appium logs from BrowserStack for the Session
+
+        Example::
+
+            session = Session.by_id(session_id)
+            with session.get_device_logs() as response:
+                with open("device.log", "w") as f:
+                    f.write(response.content)
+
+        :return: Response object containing the Device logs from BrowserStack
+        :rtype: requests.Response
+
+        """
+        response = Api.http.get(self.device_logs_url, stream=True, **Settings.request())
+        if response.status_code == 200:
+            return response
+        else:
+            response.raise_for_status()
+
+    def get_network_logs(self):
+        """
+        Get the Network logs from BrowserStack for the Session
+
+        Example::
+
+            session = Session.by_id(session_id)
+            with session.get_network_logs() as response:
+                with open("network.log", "w") as f:
+                    f.write(response.content)
+
+        :return: Response object containing the Network logs for BrowserStack
+        :rtype: requests.Response
+        """
+        response = SessionsApi.get_network_logs(self.build.hashed_id, self.hashed_id)
+        if response.status_code == 200:
+            return response
+        else:
+            response.raise_for_status()
+
+    def get_video(self):
+        """
+        Get the video from BrowserStack for the Session
+
+        Example::
+
+            session = Session.by_id(session_id)
+            with session.get_video() as response:
+                with open("BrowserStack.mp4", "w") as f:
+                    f.write(response.content)
+
+        :return: Response object containing the Video recording for the BrowserStack session
+        :rtype: requests.Response
+        """
+        response = Api.http.get(self.video_url, stream=True, **Settings.request())
+        if response.status_code == 200:
+            return response
+        else:
+            response.raise_for_status()
 
 
 class AppProfilingData:
