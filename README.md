@@ -1,9 +1,12 @@
 # baspi
-#### The BrowserStack Rest Api Client
+#### A BrowserStack Rest Api Client
+
+[![Build Status](https://app.travis-ci.com/fictitiouswizard/bsapi.svg?branch=master)](https://app.travis-ci.com/fictitiouswizard/bsapi)
+[![Documentation Status](https://readthedocs.org/projects/bsapi/badge/?version=latest)](https://bsapi.readthedocs.io/en/latest/?badge=latest)
+
 
 Provides wrapper classes for the BrowserStack rest api
 
-[![Documentation Status](https://readthedocs.org/projects/bsapi/badge/?version=latest)](https://bsapi.readthedocs.io/en/latest/?badge=latest)
 
 
 ## App Automate
