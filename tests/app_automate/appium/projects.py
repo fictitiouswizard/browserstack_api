@@ -49,7 +49,8 @@ class TestProjectsApi(unittest.TestCase):
     def test_details(self):
         projects = ProjectsApi.recent_projects()
         project = ProjectsApi.details(projects[0].project_id)
-        self.assertEqual(project.name, "BrowserStack Rest API")
+        self.assertEqual(project.name, projects[0].name)
+        self.assertGreater(len(project.builds), 0)
 
     def test_update_project_name(self):
         projects = ProjectsApi.recent_projects()

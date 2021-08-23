@@ -408,8 +408,8 @@ class SessionsApi(Api):
             session = SessionsApi(session_id, SessionStatus.passed)
 
         :param session_id: The session id
-        :param status: The new status
-        :type status: :class:`bsapi.app_automate.appium.sessions.SessionStatus`
+        :param status: The new status. Use :class:`SessionStatus` for available statuses
+        :type status: str
         :param reason: reason for the new status
         :return: Updated Session object
         """

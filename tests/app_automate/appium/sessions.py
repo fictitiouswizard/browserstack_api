@@ -1,4 +1,5 @@
 import os.path
+import time
 import unittest
 
 from appium import webdriver
@@ -12,65 +13,89 @@ from bsapi.app_automate.appium import SessionsApi
 from bsapi.app_automate.appium.sessions import SessionStatus, Session
 
 
+def setup_session_test():
+    uploaded_app = AppsApi.upload_app("./bin/ApiDemos-debug.apk", custom_id="Calc")
+    app = AppsApi.uploaded_apps(uploaded_app.custom_id)[0]
+
+    desired_caps = {
+        "build": "Python Android",
+        "device": "Samsung Galaxy S8 Plus",
+        "app": app.app_url,
+        "project": "BrowserStack Rest API",
+        "browserstack.networkLogs": "true",
+        "browserstack.deviceLogs": "true",
+        "browserstack.appiumLogs": "true",
+        "browserstack.video": "true"
+    }
+
+    url = f"https://{Settings.username}:{Settings.password}@hub-cloud.browserstack.com/wd/hub"
+
+    driver = webdriver.Remote(url, desired_caps)
+    session_id = driver.session_id
+    driver.quit()
+
+    session = Session.by_id(session_id)
+    build_id = session.build.hashed_id
+    project_id = session.project.project_id
+
+    return {
+        "app": app,
+        "project": project_id,
+        "build": build_id,
+        "session": session_id
+    }
+
+
+def tear_down_session_test(app, project, build, session):
+    try:
+        AppsApi.delete_app(app.app_id)
+    except HTTPError as e:
+        if e.response.status_code == 422:
+            apps = AppsApi.uploaded_apps()
+            if len(apps) != 0:
+                raise e
+        else:
+            raise e
+    time.sleep(1)
+    try:
+        BuildsApi.delete(build)
+    except HTTPError as e:
+        if e.response.status_code == 422:
+            c_build = [b for b in BuildsApi.recent_builds() if b.name == build.name]
+            if len(c_build) != 0:
+                BuildsApi.delete(build)
+        else:
+            raise e
+    time.sleep(1)
+    try:
+        ProjectsApi.delete(project)
+    except HTTPError as e:
+        if e.response.status_code == 422:
+            c_project = [p for p in ProjectsApi.recent_projects() if p.name == project.name]
+            if len(c_project) != 0:
+                ProjectsApi.delete(project)
+        else:
+            raise e
+
+
 class TestSession(unittest.TestCase):
+
     app = None
     session_id = None
+    build_id = None
+    project_id = None
 
     @classmethod
     def setUpClass(cls) -> None:
-        uploaded_app = AppsApi.upload_app("./bin/ApiDemos-debug.apk", custom_id="Calc")
-        app = AppsApi.uploaded_apps(uploaded_app.custom_id)[0]
-        cls.app = app
-
-        desired_caps = {
-            "build": "Python Android",
-            "device": "Samsung Galaxy S8 Plus",
-            "app": app.app_url,
-            "project": "BrowserStack Rest API",
-            "browserstack.networkLogs": "true",
-            "browserstack.deviceLogs": "true",
-            "browserstack.appiumLogs": "true",
-            "browserstack.video": "true"
-        }
-
-        url = f"https://{Settings.username}:{Settings.password}@hub-cloud.browserstack.com/wd/hub"
-
-        driver = webdriver.Remote(url, desired_caps)
-        cls.session_id = driver.session_id
-        driver.quit()
+        test_info = setup_session_test()
+        cls.app = test_info["app"]
+        cls.project_id = test_info["project"]
+        cls.build_id = test_info["build"]
+        cls.session_id = test_info["session"]
 
     @classmethod
     def tearDownClass(cls) -> None:
-        try:
-            AppsApi.delete_app(cls.app.app_id)
-        except HTTPError as e:
-            if e.response.status_code == 422:
-                apps = AppsApi.uploaded_apps()
-                if len(apps) != 0:
-                    raise e
-            else:
-                raise e
-
-        session = Session.by_id(cls.session_id)
-
-        try:
-            BuildsApi.delete(session.build.hashed_id)
-        except HTTPError as e:
-            if e.response.status_code == 422:
-                c_build = [b for b in BuildsApi.recent_builds() if b.name == build.name]
-                if len(c_build) != 0:
-                    BuildsApi.delete(session.build.hashed_id)
-            else:
-                raise e
-        try:
-            ProjectsApi.delete(session.project.project_id)
-        except HTTPError as e:
-            if e.response.status_code == 422:
-                c_project = [p for p in ProjectsApi.recent_projects() if p.name == project.name]
-                if len(c_project) != 0:
-                    ProjectsApi.delete(project.project_id)
-            else:
-                raise e
+        tear_down_session_test(cls.app, cls.project_id, cls.build_id, cls.session_id)
 
     def test_session_by_id(self):
         session = Session.by_id(TestSession.session_id)
@@ -158,64 +183,21 @@ class TestSession(unittest.TestCase):
 class TestSessionsApi(unittest.TestCase):
 
     app = None
+    project_id = None
     build_id = None
     session_id = None
 
     @classmethod
     def setUpClass(cls) -> None:
-        uploaded_app = AppsApi.upload_app("./bin/ApiDemos-debug.apk", custom_id="Calc")
-        app = AppsApi.uploaded_apps(uploaded_app.custom_id)[0]
-        cls.app = app
-
-        desired_caps = {
-            "build": "Python Android",
-            "device": "Samsung Galaxy S8 Plus",
-            "app": app.app_url,
-            "project": "BrowserStack Rest API",
-            "browserstack.networkLogs": "true"
-        }
-
-        url = f"https://{Settings.username}:{Settings.password}@hub-cloud.browserstack.com/wd/hub"
-
-        driver = webdriver.Remote(url, desired_caps)
-        cls.session_id = driver.session_id
-        driver.quit()
-
-        builds = BuildsApi.recent_builds()
-        cls.build_id = [b.hashed_id for b in builds if b.name == "Python Android"][0]
+        test_info = setup_session_test()
+        cls.app = test_info["app"]
+        cls.project_id = test_info["project"]
+        cls.build_id = test_info["build"]
+        cls.session_id = test_info["session"]
 
     @classmethod
     def tearDownClass(cls) -> None:
-        try:
-            AppsApi.delete_app(cls.app.app_id)
-        except HTTPError as e:
-            if e.response.status_code == 422:
-                apps = AppsApi.uploaded_apps()
-                if len(apps) != 0:
-                    raise e
-            else:
-                raise e
-
-        session = Session.by_id(cls.session_id)
-
-        try:
-            BuildsApi.delete(session.build.hashed_id)
-        except HTTPError as e:
-            if e.response.status_code == 422:
-                c_build = [b for b in BuildsApi.recent_builds() if b.name == session.build.name]
-                if len(c_build) != 0:
-                    raise e
-            else:
-                raise e
-        try:
-            ProjectsApi.delete(session.project.project_id)
-        except HTTPError as e:
-            if e.response.status_code == 422:
-                c_project = [p for p in ProjectsApi.recent_projects() if p.name == session.project.name]
-                if len(c_project) != 0:
-                    ProjectsApi.delete(project.project_id)
-            else:
-                raise e
+        tear_down_session_test(cls.app, cls.project_id, cls.build_id, cls.session_id)
 
     def test_session_details(self):
         session = SessionsApi.details(TestSessionsApi.session_id)
