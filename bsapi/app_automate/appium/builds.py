@@ -80,7 +80,7 @@ class BuildsApi(Api):
             ]
             return builds
         else:
-            raise Exception(f"Invalid Status Code: {response.status_code}")
+            response.raise_for_status()
 
     @classmethod
     def details(cls, build_id=None):
@@ -141,7 +141,7 @@ class BuildsApi(Api):
             ]
             return sessions
         else:
-            raise Exception(f"Invalid Status Code: {response.status_code}")
+            response.raise_for_status()
 
     @classmethod
     def delete(cls, build_id=None):
@@ -173,4 +173,4 @@ class BuildsApi(Api):
                 message=rj["message"]
             )
         else:
-            raise Exception(f"Invalid Status Code: {response.status_code}")
+            response.raise_for_status()

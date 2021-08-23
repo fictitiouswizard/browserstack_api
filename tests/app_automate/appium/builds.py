@@ -1,6 +1,7 @@
 import unittest
 
 from appium import webdriver
+from requests.exceptions import HTTPError
 
 from bsapi.app_automate.appium import BuildsApi
 from bsapi.app_automate.appium import AppsApi
@@ -30,7 +31,15 @@ class TestBuildsApi(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls) -> None:
-        AppsApi.delete_app(cls.app.app_id)
+        try:
+            AppsApi.delete_app(cls.app.app_id)
+        except HTTPError as e:
+            if e.response.status_code == 422:
+                apps = AppsApi.uploaded_apps()
+                if len(apps) != 0:
+                    raise e
+            else:
+                raise e
 
     def test_recent_builds(self):
         builds = BuildsApi.recent_builds()

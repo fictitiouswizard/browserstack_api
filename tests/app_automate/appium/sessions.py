@@ -2,6 +2,7 @@ import os.path
 import unittest
 
 from appium import webdriver
+from requests.exceptions import HTTPError
 
 from bsapi import Settings
 from bsapi.app_automate.appium import AppsApi
@@ -40,13 +41,37 @@ class TestSession(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls) -> None:
-        AppsApi.delete_app(cls.app.app_id)
+        try:
+            AppsApi.delete_app(cls.app.app_id)
+        except HTTPError as e:
+            if e.response.status_code == 422:
+                apps = AppsApi.uploaded_apps()
+                if len(apps) != 0:
+                    raise e
+            else:
+                raise e
         builds = BuildsApi.recent_builds()
         for build in builds:
-            BuildsApi.delete(build.hashed_id)
+            try:
+                BuildsApi.delete(build.hashed_id)
+            except HTTPError as e:
+                if e.response.status_code == 422:
+                    c_build = [b for b in BuildsApi.recent_builds() if b.name == build.name]
+                    if len(c_build) != 0:
+                        raise e
+                else:
+                    raise e
         projects = ProjectsApi.recent_projects()
         for project in projects:
-            ProjectsApi.delete(project.project_id)
+            try:
+                ProjectsApi.delete(project.project_id)
+            except HTTPError as e:
+                if e.response.status_code == 422:
+                    c_project = [p for p in ProjectsApi.recent_projects() if p.name == project.name]
+                    if len(c_project) != 0:
+                        raise e
+                else:
+                    raise e
 
     def test_session_by_id(self):
         session = Session.by_id(TestSession.session_id)
@@ -162,13 +187,37 @@ class TestSessionsApi(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls) -> None:
-        AppsApi.delete_app(cls.app.app_id)
+        try:
+            AppsApi.delete_app(cls.app.app_id)
+        except HTTPError as e:
+            if e.response.status_code == 422:
+                apps = AppsApi.uploaded_apps()
+                if len(apps) != 0:
+                    raise e
+            else:
+                raise e
         builds = BuildsApi.recent_builds()
         for build in builds:
-            BuildsApi.delete(build.hashed_id)
+            try:
+                BuildsApi.delete(build.hashed_id)
+            except HTTPError as e:
+                if e.response.status_code == 422:
+                    c_build = [b for b in BuildsApi.recent_builds() if b.name == build.name]
+                    if len(c_build) != 0:
+                        raise e
+                else:
+                    raise e
         projects = ProjectsApi.recent_projects()
         for project in projects:
-            ProjectsApi.delete(project.project_id)
+            try:
+                ProjectsApi.delete(project.project_id)
+            except HTTPError as e:
+                if e.response.status_code == 422:
+                    c_project = [p for p in ProjectsApi.recent_projects() if p.name == project.name]
+                    if len(c_project) != 0:
+                        raise e
+                else:
+                    raise e
 
     def test_session_details(self):
         session = SessionsApi.details(TestSessionsApi.session_id)

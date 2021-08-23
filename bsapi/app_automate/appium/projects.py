@@ -77,7 +77,7 @@ class ProjectsApi(Api):
             ]
             return projects
         else:
-            raise Exception(f"Invalid Status Code: {response.status_code}")
+            response.raise_for_status()
 
     @classmethod
     def details(cls, project_id=None):
@@ -135,7 +135,7 @@ class ProjectsApi(Api):
                 ]
             )
         else:
-            raise Exception(f"Invalid Status Code: {response.status_code}")
+            response.raise_for_status()
 
     @classmethod
     def update_project_name(cls, project_id=None, name=None):
@@ -175,7 +175,7 @@ class ProjectsApi(Api):
                 )
             return project
         else:
-            raise Exception("Invalid Status Code")
+            response.raise_for_status()
 
     @classmethod
     def status_badge_key(cls, project_id=None):
@@ -202,7 +202,7 @@ class ProjectsApi(Api):
         if response.status_code == 200:
             return response.text
         else:
-            raise Exception(f"Invalid Status Code: {response.status_code}")
+            response.raise_for_status()
 
     @classmethod
     def delete(cls, project_id=None):
@@ -241,4 +241,4 @@ class ProjectsApi(Api):
                 message=rj["message"]
             )
         else:
-            raise Exception(f"Invalid Status Code: {response.status_code}")
+            response.raise_for_status()

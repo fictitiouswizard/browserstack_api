@@ -88,7 +88,7 @@ class AppsApi(Api):
                 shareable_id=rj["shareable_id"] if "shareable_id" in rj else None
             )
         else:
-            raise Exception("Invalid Status Code")
+            response.raise_for_status()
 
     @classmethod
     def uploaded_apps(cls, custom_id=None):
@@ -132,7 +132,7 @@ class AppsApi(Api):
                 in rj
             ]
         else:
-            raise Exception("Invalid Status Code")
+            response.raise_for_status()
 
     @classmethod
     def uploaded_apps_by_group(cls):
@@ -171,7 +171,7 @@ class AppsApi(Api):
                 in rj
             ]
         else:
-            raise Exception("Invalid Status Code")
+            response.raise_for_status()
 
     @classmethod
     def delete_app(cls, app_id):
@@ -205,4 +205,4 @@ class AppsApi(Api):
             else:
                 return False
         else:
-            raise Exception("Invalid Status Code")
+            response.raise_for_status()
