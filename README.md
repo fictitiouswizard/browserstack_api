@@ -1,4 +1,4 @@
-# baspi
+# bsapi
 #### A BrowserStack Rest Api Client
 
 [![Build Status](https://app.travis-ci.com/fictitiouswizard/bsapi.svg?branch=master)](https://app.travis-ci.com/fictitiouswizard/bsapi)
@@ -7,6 +7,27 @@
 
 Provides wrapper classes for the BrowserStack rest api
 
+## Setup
+
+---
+
+Set your username and key to environment variables.
+
+```
+export BROWSERSTACK_USERNAME = <your username>
+export BROWSERSTACK_KEY = <your key>
+```
+
+or set them on the settings object
+
+```python
+
+from bsapi import Settings
+
+Settings.username = <your username>
+Settings.password = <your key>
+
+```
 
 
 ## App Automate
@@ -22,8 +43,8 @@ import os
 from appium import webdriver
 from bsapi.app_automate.appium import Session
 
-username = os.getenv("browserstack_username")
-key = os.getenv("browserstack_key")
+username = os.getenv("BROWSERSTACK_USERNAME")
+key = os.getenv("BROWSERSTACK_KEY")
 
 desired_caps = {
     "build": "Python Android",
