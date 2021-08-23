@@ -1,7 +1,6 @@
 .env
 venv
 .idea
-bin
 
 *.egg-info
 dist

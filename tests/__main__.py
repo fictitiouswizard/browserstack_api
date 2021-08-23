@@ -20,6 +20,8 @@ def main():
 
     runner.run(session_test_suite())
 
+    return unittest.result
+
 
 if __name__ == "__main__":
     main()

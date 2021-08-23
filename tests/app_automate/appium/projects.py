@@ -14,7 +14,7 @@ class TestProjectsApi(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        uploaded_app = AppsApi.upload_app("./bin/Calculator.apk", custom_id="Calc")
+        uploaded_app = AppsApi.upload_app("./bin/ApiDemos-debug.apk", custom_id="Calc")
         app = AppsApi.uploaded_apps(uploaded_app.custom_id)[0]
         cls.app = app
 

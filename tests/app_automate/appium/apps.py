@@ -6,7 +6,7 @@ from bsapi.app_automate.appium import AppsApi
 class TestAppsApi(unittest.TestCase):
 
     def test_upload_app(self):
-        app = AppsApi.upload_app("./bin/Calculator.apk", custom_id="calc")
+        app = AppsApi.upload_app("./bin/ApiDemos-debug.apk", custom_id="calc")
         self.assertEqual("calc", app.custom_id)
 
     def test_uploaded_apps(self):
