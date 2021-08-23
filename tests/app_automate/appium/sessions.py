@@ -50,28 +50,27 @@ class TestSession(unittest.TestCase):
                     raise e
             else:
                 raise e
-        builds = BuildsApi.recent_builds()
-        for build in builds:
-            try:
-                BuildsApi.delete(build.hashed_id)
-            except HTTPError as e:
-                if e.response.status_code == 422:
-                    c_build = [b for b in BuildsApi.recent_builds() if b.name == build.name]
-                    if len(c_build) != 0:
-                        raise e
-                else:
-                    raise e
-        projects = ProjectsApi.recent_projects()
-        for project in projects:
-            try:
-                ProjectsApi.delete(project.project_id)
-            except HTTPError as e:
-                if e.response.status_code == 422:
-                    c_project = [p for p in ProjectsApi.recent_projects() if p.name == project.name]
-                    if len(c_project) != 0:
-                        raise e
-                else:
-                    raise e
+
+        session = Session.by_id(cls.session_id)
+
+        try:
+            BuildsApi.delete(session.build.hashed_id)
+        except HTTPError as e:
+            if e.response.status_code == 422:
+                c_build = [b for b in BuildsApi.recent_builds() if b.name == build.name]
+                if len(c_build) != 0:
+                    BuildsApi.delete(session.build.hashed_id)
+            else:
+                raise e
+        try:
+            ProjectsApi.delete(session.project.project_id)
+        except HTTPError as e:
+            if e.response.status_code == 422:
+                c_project = [p for p in ProjectsApi.recent_projects() if p.name == project.name]
+                if len(c_project) != 0:
+                    ProjectsApi.delete(project.project_id)
+            else:
+                raise e
 
     def test_session_by_id(self):
         session = Session.by_id(TestSession.session_id)
@@ -196,28 +195,27 @@ class TestSessionsApi(unittest.TestCase):
                     raise e
             else:
                 raise e
-        builds = BuildsApi.recent_builds()
-        for build in builds:
-            try:
-                BuildsApi.delete(build.hashed_id)
-            except HTTPError as e:
-                if e.response.status_code == 422:
-                    c_build = [b for b in BuildsApi.recent_builds() if b.name == build.name]
-                    if len(c_build) != 0:
-                        raise e
-                else:
+
+        session = Session.by_id(cls.session_id)
+
+        try:
+            BuildsApi.delete(session.build.hashed_id)
+        except HTTPError as e:
+            if e.response.status_code == 422:
+                c_build = [b for b in BuildsApi.recent_builds() if b.name == session.build.name]
+                if len(c_build) != 0:
                     raise e
-        projects = ProjectsApi.recent_projects()
-        for project in projects:
-            try:
-                ProjectsApi.delete(project.project_id)
-            except HTTPError as e:
-                if e.response.status_code == 422:
-                    c_project = [p for p in ProjectsApi.recent_projects() if p.name == project.name]
-                    if len(c_project) != 0:
-                        raise e
-                else:
-                    raise e
+            else:
+                raise e
+        try:
+            ProjectsApi.delete(session.project.project_id)
+        except HTTPError as e:
+            if e.response.status_code == 422:
+                c_project = [p for p in ProjectsApi.recent_projects() if p.name == session.project.name]
+                if len(c_project) != 0:
+                    ProjectsApi.delete(project.project_id)
+            else:
+                raise e
 
     def test_session_details(self):
         session = SessionsApi.details(TestSessionsApi.session_id)
