@@ -2,6 +2,10 @@ import os
 
 from requests.auth import HTTPBasicAuth
 from dotenv import load_dotenv
+from from_root import from_root
+
+from bsapi.config import BSAPIConf
+import bsapi.app_automate.appium.utils
 
 load_dotenv()
 
@@ -15,6 +19,35 @@ class Settings:
     proxies = {}
     verify_ssl = True
     base_url = "https://api-cloud.browserstack.com"
+    apps_dir = "apps"
+    media_dir = "media"
+    base_dir = from_root()
+    conf_loader = bsapi.app_automate.appium.utils.AppiumJsonLoader
+    __conf = None
+
+    @classmethod
+    def get_config(cls) -> BSAPIConf:
+        if cls.__conf is None:
+            cls.__conf = cls.conf_loader.get_config(cls, cls.__conf)
+            return cls.__conf
+        else:
+            return cls.__conf
+
+    @classmethod
+    def save_config(cls):
+        return cls.conf_loader.save_config(cls, cls.__conf)
+
+    @classmethod
+    def get_app(cls, platform, package, version):
+        return cls.conf_loader.get_app(cls, platform, package, version)
+
+    @classmethod
+    def get_apps_dir(cls):
+        return os.path.join(cls.base_dir, cls.apps_dir)
+
+    @classmethod
+    def get_media_dir(cls):
+        return os.path.join(cls.base_dir, cls.apps_dir)
 
     @classmethod
     def auth(cls):
@@ -40,4 +73,13 @@ class Settings:
             params["verify"] = Settings.verify_ssl
 
         return params
+
+    @classmethod
+    def bootstrap(cls):
+        cls.conf_loader.bootstrap(cls)
+        if os.path.isdir(os.path.join(cls.base_dir, cls.apps_dir)) is False:
+            os.makedirs(os.path.join(cls.base_dir, cls.apps_dir))
+        if os.path.isdir(os.path.join(cls.base_dir, cls.media_dir)) is False:
+            os.makedirs(os.path.join(cls.base_dir, cls.apps_dir))
+
 

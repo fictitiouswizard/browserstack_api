@@ -1,4 +1,4 @@
-from bsapi import Settings, Api
+import bsapi
 
 
 class Device:
@@ -17,7 +17,7 @@ class Device:
         self.real_mobile = real_mobile
 
 
-class DevicesApi(Api):
+class DevicesApi(bsapi.Api):
     """Class for interacting with the Devices REST endpoint on BrowserStack"""
     @classmethod
     def get_device_list(cls):
@@ -27,9 +27,9 @@ class DevicesApi(Api):
         :return: List of supported devices
         :rtype: list[:class:`bsapi.app_automate.appium.devices.Device`]
         """
-        url = f"{Settings.base_url}/app-automate/devices.json"
+        url = f"{bsapi.Settings.base_url}/app-automate/devices.json"
 
-        response = cls.http.get(url, **Settings.request())
+        response = cls.http.get(url, **bsapi.Settings.request())
 
         if response.status_code == 200:
             rj = response.json()

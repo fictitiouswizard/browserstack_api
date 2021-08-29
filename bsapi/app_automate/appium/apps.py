@@ -1,4 +1,4 @@
-from bsapi import Settings, Api
+import bsapi
 
 
 class UploadResponse:
@@ -38,13 +38,13 @@ class UploadedApp:
         self.shareable_id = shareable_id
 
 
-class AppsApi(Api):
+class AppsApi(bsapi.Api):
     """
     Class for interacting with the Apps REST endpoint
     """
 
     @classmethod
-    def upload_app(cls, file=None, url=None, custom_id=None):
+    def upload_app(cls, file=None, url=None, custom_id=None) -> UploadResponse:
         """
         Upload an application file to BrowserStack.  File or url must be set but not both.
 
@@ -62,7 +62,7 @@ class AppsApi(Api):
         :rtype: :class:`bsapi.app.automate.appium.apps.UploadResponse`
         :raises ValueError: file or url are required but not both
         """
-        api_url = f"{Settings.base_url}/app-automate/upload"
+        api_url = f"{bsapi.Settings.base_url}/app-automate/upload"
 
         if file is not None and url is not None:
             raise ValueError("Must use file or url not both")
@@ -76,9 +76,9 @@ class AppsApi(Api):
             params["custom_id"] = custom_id
         if file is not None:
             files = {"file": open(file, "rb")}
-            response = cls.http.post(api_url, files=files, data=params, **Settings.request())
+            response = cls.http.post(api_url, files=files, data=params, **bsapi.Settings.request())
         else:
-            response = cls.http.post(api_url, data=params, **Settings.request())
+            response = cls.http.post(api_url, data=params, **bsapi.Settings.request())
 
         if response.status_code == 200:
             rj = response.json()
@@ -91,7 +91,7 @@ class AppsApi(Api):
             response.raise_for_status()
 
     @classmethod
-    def uploaded_apps(cls, custom_id=None):
+    def uploaded_apps(cls, custom_id=None) -> [UploadedApp]:
         """
         Return all of the uploaded apps for a custom id.  If no custom id is supplied all apps are returned
 
@@ -104,12 +104,12 @@ class AppsApi(Api):
         :return: A list of uploaded apps
         :rtype: list[:class:`bsapi.app_automate.appium.apps.UploadedApp`]
         """
-        api_url = f"{Settings.base_url}/app-automate/recent_apps"
+        api_url = f"{bsapi.Settings.base_url}/app-automate/recent_apps"
 
         if custom_id is not None:
             api_url = f"{api_url}/{custom_id}"
 
-        response = cls.http.get(api_url, **Settings.request())
+        response = cls.http.get(api_url, **bsapi.Settings.request())
 
         if response.status_code == 200:
             rj = response.json()
@@ -135,7 +135,7 @@ class AppsApi(Api):
             response.raise_for_status()
 
     @classmethod
-    def uploaded_apps_by_group(cls):
+    def uploaded_apps_by_group(cls) -> [UploadedApp]:
         """
         Get the uploaded apps for your group
 
@@ -146,9 +146,9 @@ class AppsApi(Api):
         :return: Returns an list of uploaded apps
         :rtype: list[:class:`bsapi.app_automate.appium.apps.UploadedApp`]
         """
-        url = f"{Settings.base_url}/app-automate/recent_group_apps"
+        url = f"{bsapi.Settings.base_url}/app-automate/recent_group_apps"
 
-        response = cls.http.get(url, **Settings.request())
+        response = cls.http.get(url, **bsapi.Settings.request())
 
         if response.status_code == 200:
             rj = response.json()
@@ -174,7 +174,7 @@ class AppsApi(Api):
             response.raise_for_status()
 
     @classmethod
-    def delete_app(cls, app_id):
+    def delete_app(cls, app_id) -> bool:
         """
         Delete the app from BrowserStack
 
@@ -194,9 +194,9 @@ class AppsApi(Api):
         if app_id is None:
             raise ValueError("Must enter an app id")
 
-        url = f"{Settings.base_url}/app-automate/app/delete/{app_id}"
+        url = f"{bsapi.Settings.base_url}/app-automate/app/delete/{app_id}"
 
-        response = cls.http.delete(url, **Settings.request())
+        response = cls.http.delete(url, **bsapi.Settings.request())
 
         if response.status_code == 200:
             rj = response.json()

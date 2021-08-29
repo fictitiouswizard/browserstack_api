@@ -6,3 +6,4 @@ venv
 dist
 
 docs/_build
+bsapi.json

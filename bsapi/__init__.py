@@ -10,5 +10,6 @@ Modules:
 """
 __version__ = "0.1.0"
 
-from .settings import Settings
-from .base import Api
+from bsapi.settings import Settings
+from bsapi.base import Api
+from bsapi.config import BSAPIConf

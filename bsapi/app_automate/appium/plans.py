@@ -1,4 +1,4 @@
-from bsapi import Settings, Api
+import bsapi
 
 
 class AppAutomatePlan:
@@ -24,7 +24,7 @@ class AppAutomatePlan:
         self.queued_sessions_max_allowed = queued_sessions_max_allowed
 
 
-class PlansApi(Api):
+class PlansApi(bsapi.Api):
     """Class for interacting with the Plans REST endpoint on BrowserStack"""
 
     @classmethod
@@ -39,9 +39,9 @@ class PlansApi(Api):
         :return: The plan details for the current user
         :rtype: :class:`bsapi.app_automate.appium.plans.AppAutomatePlan`
         """
-        url = f"{Settings.base_url}/app-automate/plan.json"
+        url = f"{bsapi.Settings.base_url}/app-automate/plan.json"
 
-        response = cls.http.get(url, **Settings.request())
+        response = cls.http.get(url, **bsapi.Settings.request())
 
         if response.status_code == 200:
             rj = response.json()

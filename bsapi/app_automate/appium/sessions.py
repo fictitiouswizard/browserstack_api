@@ -1,8 +1,8 @@
-from bsapi import Settings, Api
-from .responses import DeleteResponse
-from .apps import UploadedApp
-from .projects import ProjectsApi
-from .builds import BuildsApi
+import bsapi
+from bsapi.app_automate.appium.responses import DeleteResponse
+from bsapi.app_automate.appium.apps import UploadedApp
+from bsapi.app_automate.appium.projects import ProjectsApi
+from bsapi.app_automate.appium.builds import BuildsApi
 
 
 class SessionStatus:
@@ -139,7 +139,7 @@ class Session:
         :return: Response object containing the session logs from BrowserStack
         :rtype: requests.Response
         """
-        response = Api.http.get(self.logs, stream=True, **Settings.request())
+        response = bsapi.Api.http.get(self.logs, stream=True, **bsapi.Settings.request())
         if response.status_code == 200:
             return response
         else:
@@ -178,7 +178,7 @@ class Session:
         :return: Response object containing the Appium Logs
         :rtype: requests.Response
         """
-        response = Api.http.get(self.appium_logs_url, stream=True, **Settings.request())
+        response = bsapi.Api.http.get(self.appium_logs_url, stream=True, **bsapi.Settings.request())
         if response.status_code == 200:
             return response
         else:
@@ -217,7 +217,7 @@ class Session:
         :rtype: requests.Response
 
         """
-        response = Api.http.get(self.device_logs_url, stream=True, **Settings.request())
+        response = bsapi.Api.http.get(self.device_logs_url, stream=True, **bsapi.Settings.request())
         if response.status_code == 200:
             return response
         else:
@@ -293,7 +293,7 @@ class Session:
         :return: Response object containing the Video recording for the BrowserStack session
         :rtype: requests.Response
         """
-        response = Api.http.get(self.video_url, stream=True, **Settings.request())
+        response = bsapi.Api.http.get(self.video_url, stream=True, **bsapi.Settings.request())
         if response.status_code == 200:
             return response
         else:
@@ -340,7 +340,7 @@ class AppProfilingData:
         self.temperature = temp
 
 
-class SessionsApi(Api):
+class SessionsApi(bsapi.Api):
     """
     Wrapper around the Sessions endpoint
     """
@@ -361,9 +361,9 @@ class SessionsApi(Api):
         if session_id is None:
             raise ValueError("Session ID is required")
 
-        url = f"{Settings.base_url}/app-automate/sessions/{session_id}.json"
+        url = f"{bsapi.Settings.base_url}/app-automate/sessions/{session_id}.json"
 
-        response = cls.http.get(url, **Settings.request())
+        response = cls.http.get(url, **bsapi.Settings.request())
 
         if response.status_code == 200:
             rj = response.json()["automation_session"]
@@ -418,13 +418,13 @@ class SessionsApi(Api):
         if status is None:
             raise ValueError("Status is required")
 
-        url = f"{Settings.base_url}/app-automate/sessions/{session_id}.json"
+        url = f"{bsapi.Settings.base_url}/app-automate/sessions/{session_id}.json"
 
         data = {"status": status}
         if reason is not None:
             data["reason"] = reason
 
-        response = cls.http.put(url, json=data, **Settings.request())
+        response = cls.http.put(url, json=data, **bsapi.Settings.request())
 
         if response.status_code == 200:
             rj = response.json()["automation_session"]
@@ -463,9 +463,9 @@ class SessionsApi(Api):
         if session_id is None:
             raise ValueError("Session ID is required")
 
-        url = f"{Settings.base_url}/app-automate/sessions/{session_id}.json"
+        url = f"{bsapi.Settings.base_url}/app-automate/sessions/{session_id}.json"
 
-        response = cls.http.delete(url, **Settings.request())
+        response = cls.http.delete(url, **bsapi.Settings.request())
 
         if response.status_code == 200:
             rj = response.json()
@@ -497,8 +497,8 @@ class SessionsApi(Api):
         if session_id is None:
             raise ValueError("Session ID is required")
 
-        url = f"{Settings.base_url}/app-automate/builds/{build_id}/sessions/{session_id}/logs"
-        response = cls.http.get(url, stream=True, **Settings.request())
+        url = f"{bsapi.Settings.base_url}/app-automate/builds/{build_id}/sessions/{session_id}/logs"
+        response = cls.http.get(url, stream=True, **bsapi.Settings.request())
 
         if response.status_code == 200:
             return response
@@ -526,8 +526,8 @@ class SessionsApi(Api):
         if session_id is None:
             raise ValueError("Session ID is required")
 
-        url = f"{Settings.base_url}/app-automate/builds/{build_id}/sessions/{session_id}/devicelogs"
-        response = cls.http.get(url, stream=True, **Settings.request())
+        url = f"{bsapi.Settings.base_url}/app-automate/builds/{build_id}/sessions/{session_id}/devicelogs"
+        response = cls.http.get(url, stream=True, **bsapi.Settings.request())
 
         if response.status_code == 200:
             return response
@@ -555,9 +555,9 @@ class SessionsApi(Api):
         if session_id is None:
             raise ValueError("Session ID is required")
 
-        url = f"{Settings.base_url}/app-automate/builds/{build_id}/sessions/{session_id}/appiumlogs"
+        url = f"{bsapi.Settings.base_url}/app-automate/builds/{build_id}/sessions/{session_id}/appiumlogs"
 
-        response = cls.http.get(url, stream=True, **Settings.request())
+        response = cls.http.get(url, stream=True, **bsapi.Settings.request())
 
         if response.status_code == 200:
             return response
@@ -585,9 +585,9 @@ class SessionsApi(Api):
         if session_id is None:
             raise ValueError("Session ID is required")
 
-        url = f"{Settings.base_url}/app-automate/builds/{build_id}/sessions/{session_id}/networklogs"
+        url = f"{bsapi.Settings.base_url}/app-automate/builds/{build_id}/sessions/{session_id}/networklogs"
 
-        response = cls.http.get(url, stream=True, **Settings.request())
+        response = cls.http.get(url, stream=True, **bsapi.Settings.request())
 
         if response.status_code == 200:
             return response
@@ -615,9 +615,9 @@ class SessionsApi(Api):
         if session_id is None:
             raise ValueError("Session ID is required")
 
-        url = f"{Settings.base_url}/app-automate/builds/{build_id}/sessions/{session_id}/appprofiling"
+        url = f"{bsapi.Settings.base_url}/app-automate/builds/{build_id}/sessions/{session_id}/appprofiling"
 
-        response = cls.http.get(url, **Settings.request())
+        response = cls.http.get(url, **bsapi.Settings.request())
 
         if response.status_code == 200:
             rj = response.json()

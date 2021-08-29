@@ -1,6 +1,6 @@
-from bsapi import Settings, Api
-from .builds import Build
-from .responses import DeleteResponse
+import bsapi
+from bsapi.app_automate.appium.builds import Build
+from bsapi.app_automate.appium.responses import DeleteResponse
 
 
 class Project:
@@ -29,7 +29,7 @@ class Project:
         self.builds = builds
 
 
-class ProjectsApi(Api):
+class ProjectsApi(bsapi.Api):
 
     @classmethod
     def recent_projects(cls, limit=None, offset=None, status=None):
@@ -48,7 +48,7 @@ class ProjectsApi(Api):
         :return: List of recent projects
         :rtype: list[:class:`Project`]
         """
-        url = f"{Settings.base_url}/app-automate/projects.json"
+        url = f"{bsapi.Settings.base_url}/app-automate/projects.json"
 
         params = {}
         if limit is not None:
@@ -58,7 +58,7 @@ class ProjectsApi(Api):
         if status is not None:
             params["status"] = status
 
-        response = cls.http.get(url, params=params, **Settings.request())
+        response = cls.http.get(url, params=params, **bsapi.Settings.request())
 
         if response.status_code == 200:
             rj = response.json()
@@ -100,8 +100,8 @@ class ProjectsApi(Api):
         if project_id is None:
             raise ValueError("Project ID cannot be None")
 
-        url = f"{Settings.base_url}/app-automate/projects/{project_id}.json"
-        response = cls.http.get(url, **Settings.request())
+        url = f"{bsapi.Settings.base_url}/app-automate/projects/{project_id}.json"
+        response = cls.http.get(url, **bsapi.Settings.request())
 
         if response.status_code == 200:
             rj = response.json()["project"]
@@ -158,9 +158,9 @@ class ProjectsApi(Api):
         if name is None:
             raise ValueError("Name is required")
 
-        url = f"{Settings.base_url}/app-automate/projects/{project_id}.json"
+        url = f"{bsapi.Settings.base_url}/app-automate/projects/{project_id}.json"
         data = {"name": name}
-        response = cls.http.put(url, json=data, **Settings.request())
+        response = cls.http.put(url, json=data, **bsapi.Settings.request())
 
         if response.status_code == 200:
             p = response.json()
@@ -196,8 +196,8 @@ class ProjectsApi(Api):
         if project_id is None:
             raise ValueError("Project ID is required")
 
-        url = f"{Settings.base_url}/app-automate/projects/{project_id}/badge_key"
-        response = cls.http.get(url, **Settings.request())
+        url = f"{bsapi.Settings.base_url}/app-automate/projects/{project_id}/badge_key"
+        response = cls.http.get(url, **bsapi.Settings.request())
 
         if response.status_code == 200:
             return response.text
@@ -231,8 +231,8 @@ class ProjectsApi(Api):
         if project_id is None:
             raise ValueError("Project ID is required")
 
-        url = f"{Settings.base_url}/app-automate/projects/{project_id}.json"
-        response = cls.http.delete(url, **Settings.request())
+        url = f"{bsapi.Settings.base_url}/app-automate/projects/{project_id}.json"
+        response = cls.http.delete(url, **bsapi.Settings.request())
 
         if response.status_code == 200:
             rj = response.json()

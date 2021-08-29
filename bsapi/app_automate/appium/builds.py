@@ -1,6 +1,6 @@
-from bsapi import Settings, Api
-from .apps import UploadedApp
-from .responses import DeleteResponse
+import bsapi
+from bsapi.app_automate.appium.apps import UploadedApp
+from bsapi.app_automate.appium.responses import DeleteResponse
 
 
 class Build:
@@ -40,7 +40,7 @@ class Build:
         self.sub_group_id = sub_group_id
 
 
-class BuildsApi(Api):
+class BuildsApi(bsapi.Api):
     """
     Class for interacting with the Builds REST endpoint
     """
@@ -67,9 +67,9 @@ class BuildsApi(Api):
             params["offset"] = offset
         if status is not None:
             params["status"] = status
-        url = f"{Settings.base_url}/app-automate/builds.json"
+        url = f"{bsapi.Settings.base_url}/app-automate/builds.json"
 
-        response = cls.http.get(url, params=params, **Settings.request())
+        response = cls.http.get(url, params=params, **bsapi.Settings.request())
 
         if response.status_code == 200:
             rj = response.json()
@@ -104,8 +104,8 @@ class BuildsApi(Api):
 
         from .sessions import Session
 
-        url = f"{Settings.base_url}/app-automate/builds/{build_id}/sessions.json"
-        response = cls.http.get(url, **Settings.request())
+        url = f"{bsapi.Settings.base_url}/app-automate/builds/{build_id}/sessions.json"
+        response = cls.http.get(url, **bsapi.Settings.request())
 
         if response.status_code == 200:
             rj = response.json()
@@ -163,8 +163,8 @@ class BuildsApi(Api):
         if build_id is None:
             raise ValueError("Build ID is required")
 
-        url = f"{Settings.base_url}/app-automate/builds/{build_id}.json"
-        response = cls.http.delete(url, **Settings.request())
+        url = f"{bsapi.Settings.base_url}/app-automate/builds/{build_id}.json"
+        response = cls.http.delete(url, **bsapi.Settings.request())
 
         if response.status_code == 200:
             rj = response.json()
