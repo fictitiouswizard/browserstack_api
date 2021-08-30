@@ -1,6 +1,6 @@
 import unittest
 
-from bsapi.app_automate.appium.utils import AppiumTestCase, connect
+from bsapi.app_automate.appium.utils import connect, appium_test_suite
 from bsapi.app_automate.appium import AppsApi
 from bsapi import Settings
 
@@ -10,6 +10,12 @@ from bsapi import Settings
 
 
 class ConnectTestCase(unittest.TestCase):
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        bs_apps = AppsApi.uploaded_apps()
+        for bs_app in bs_apps:
+            AppsApi.delete_app(bs_app.app_id)
 
     def test_connect_app_url(self):
         try:
@@ -28,9 +34,7 @@ class ConnectTestCase(unittest.TestCase):
         try:
             driver = connect(platform="android", package="io.appium.android.apis", version="3.3.1", caps="Example")
             driver.quit()
-            bs_apps = AppsApi.uploaded_apps()
-            for bs_app in bs_apps:
-                AppsApi.delete_app(bs_app.app_id)
+
         except Exception as e:
             self.fail(e)
         self.assertTrue(True)
@@ -40,6 +44,7 @@ def connect_test_suite():
     suite = unittest.TestSuite()
 
     suite.addTest(ConnectTestCase("test_connect_app_url"))
+    suite.addTest(ConnectTestCase("test_connect_app_desc"))
     suite.addTest(ConnectTestCase("test_connect_app_desc"))
 
     return suite

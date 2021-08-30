@@ -1,4 +1,4 @@
-import unittest
+import functools
 import os
 from os import path
 
@@ -6,10 +6,11 @@ from pyaxmlparser import APK
 import jsonpickle
 from appium import webdriver
 
-import bsapi.config
+import bsapi
+from bsapi.app_automate.appium import AppsApi
 
 
-class AppiumJsonLoader(bsapi.config.ConfigLoader):
+class AppiumJsonLoader(bsapi.ConfigLoader):
     conf_file_name = "bsapi.json"
 
     @classmethod
@@ -17,7 +18,7 @@ class AppiumJsonLoader(bsapi.config.ConfigLoader):
         return os.path.join(settings.base_dir, cls.conf_file_name)
 
     @classmethod
-    def get_config(cls, settings, config) -> bsapi.config.BSAPIConf:
+    def get_config(cls, settings, config) -> bsapi.configuration.BSAPIConf:
         if config is None:
             with open(cls.get_config_file(settings), "r") as config_file:
                 config = jsonpickle.decode(config_file.read())
@@ -39,6 +40,7 @@ class AppiumJsonLoader(bsapi.config.ConfigLoader):
             if app["package"] == package and app["version"] == version and app["platform"] == platform
         ]
         if len(apps) >= 1:
+            print("App found")
             return apps[0]
         else:
             # Check if there are any new apps in the apps folder
@@ -63,8 +65,8 @@ class AppiumJsonLoader(bsapi.config.ConfigLoader):
                             "build": apk.version_code,
                             "platform": "android"
                         }
-                        custom_id = f"android:{apk.package}:{apk.version_name}"
-                        from bsapi.app_automate.appium import AppsApi
+                        custom_id = f"android-{apk.package}-{apk.version_name}"
+                        print(f"Uploading {app_path}")
                         uploaded_app = AppsApi.upload_app(app_path, custom_id=custom_id)
                         app["app_url"] = uploaded_app.app_url
                         app["custom_id"] = uploaded_app.custom_id
@@ -80,7 +82,7 @@ class AppiumJsonLoader(bsapi.config.ConfigLoader):
 
     @classmethod
     def bootstrap(cls, settings):
-        conf = bsapi.config.BSAPIConf()
+        conf = bsapi.configuration.BSAPIConf()
         conf.desired_caps = [
             {
                 "dc_name": "Example",
@@ -134,8 +136,8 @@ def connect(platform=None, package=None, version=None, caps=None, app_url=None) 
 
     if app_url is not None:
         desired_caps["app"] = app_url
-    elif platform is not None and package is not None and version is not None:
-        desired_caps["app"] = Settings.conf_loader.get_app(platform, package, version)["app_url"]
+    elif platform is not None and package is not None and version is not None and app_url is None:
+        desired_caps["app"] = Settings.get_app(platform, package, version)["app_url"]
     else:
         raise ValueError("If app_url is None platform, package, and version must be provided")
 
@@ -144,27 +146,12 @@ def connect(platform=None, package=None, version=None, caps=None, app_url=None) 
     return driver
 
 
-class AppiumTestCase(unittest.TestCase):
-    platform = None
-    package = None
-    version = None
-    desired_caps = None
-    driver = None
-    session_id = None
+def appium_test_suite(f, platform=None, package=None, version=None, caps=None, app_url=None):
+    @functools.wraps
+    def wrapper(*args, **kwargs):
+        driver = connect(platform, package, version, caps, app_url)
+        kwargs["driver"] = driver
+        f(*args, **kwargs)
+        driver.quit()
 
-    def __init__(self, method_name, platform=None, package=None, version=None, desired_caps=None):
-        super(AppiumTestCase, self).__init__(methodName=method_name)
-        self.platform = platform
-        self.package = package
-        self.version = version
-        self.desired_caps = desired_caps
-
-    @classmethod
-    def setUpClass(cls) -> None:
-        driver = connect(cls.platform, cls.package, cls.version, cls.desired_caps)
-        cls.driver = driver
-        cls.session_id = driver.session_id
-
-    @classmethod
-    def tearDownClass(cls) -> None:
-        cls.driver.quit()
+    return wrapper

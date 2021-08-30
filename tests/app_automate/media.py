@@ -8,7 +8,7 @@ class TestMediaApi(unittest.TestCase):
 
     def test_upload_file(self):
         try:
-            media_file_response = MediaApi.upload_file(f"{os.getcwd()}/bin/green_tree_python.jpg", custom_id="python")
+            media_file_response = MediaApi.upload_file(f"{os.getcwd()}/media/green_tree_python.jpg", custom_id="python")
             self.assertEqual(media_file_response.custom_id, "python")
         except HTTPError as http_error:
             print(http_error.response.json()["error"])
@@ -46,7 +46,7 @@ def test_suite_media_api():
 class TestMedia(unittest.TestCase):
 
     def test_delete(self):
-        media_upload_response = MediaApi.upload_file("bin/green_tree_python.jpg", custom_id="python")
+        media_upload_response = MediaApi.upload_file(f"{os.getcwd()}/media/green_tree_python.jpg", custom_id="python")
         media_file = MediaApi.recent_files(media_upload_response.custom_id)[0]
         success = media_file.delete()
         self.assertTrue(success)

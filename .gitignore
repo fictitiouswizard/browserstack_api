@@ -7,3 +7,6 @@ dist
 
 docs/_build
 bsapi.json
+
+.coverage
+htmlcov

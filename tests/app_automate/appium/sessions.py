@@ -14,7 +14,7 @@ from bsapi.app_automate.appium.sessions import SessionStatus, Session
 
 
 def setup_session_test():
-    uploaded_app = AppsApi.upload_app("./bin/ApiDemos-debug.apk", custom_id="Calc")
+    uploaded_app = AppsApi.upload_app("./apps/ApiDemos-debug.apk", custom_id="Calc")
     app = AppsApi.uploaded_apps(uploaded_app.custom_id)[0]
 
     desired_caps = {

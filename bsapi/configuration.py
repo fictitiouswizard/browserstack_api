@@ -1,13 +1,41 @@
+from abc import ABC, abstractmethod
 import os
 
 from requests.auth import HTTPBasicAuth
 from dotenv import load_dotenv
 from from_root import from_root
 
-from bsapi.configuration import BSAPIConf
-import bsapi.app_automate.appium.utils
-
 load_dotenv()
+
+
+class BSAPIConf:
+    def __init__(self):
+        self.apps = []
+        self.desired_caps = []
+        self.media = []
+
+
+class ConfigLoader(ABC):
+
+    @classmethod
+    @abstractmethod
+    def get_config(cls, settings, config) -> BSAPIConf:
+        pass
+
+    @classmethod
+    @abstractmethod
+    def save_config(cls, settings, config):
+        pass
+
+    @classmethod
+    @abstractmethod
+    def get_app(cls, settings, plateform, package, build):
+        pass
+
+    @classmethod
+    @abstractmethod
+    def bootstrap(cls, settings):
+        pass
 
 
 class Settings:
@@ -22,7 +50,7 @@ class Settings:
     apps_dir = "apps"
     media_dir = "media"
     base_dir = from_root()
-    conf_loader = bsapi.app_automate.appium.utils.AppiumJsonLoader
+    conf_loader = None
     __conf = None
 
     @classmethod
@@ -81,5 +109,3 @@ class Settings:
             os.makedirs(os.path.join(cls.base_dir, cls.apps_dir))
         if os.path.isdir(os.path.join(cls.base_dir, cls.media_dir)) is False:
             os.makedirs(os.path.join(cls.base_dir, cls.apps_dir))
-
-

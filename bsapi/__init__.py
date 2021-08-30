@@ -10,6 +10,9 @@ Modules:
 """
 __version__ = "0.1.0"
 
-from bsapi.settings import Settings
 from bsapi.base import Api
-from bsapi.config import BSAPIConf
+from bsapi.configuration import BSAPIConf, ConfigLoader, Settings
+
+from bsapi.app_automate.appium.utils import AppiumJsonLoader
+
+Settings.conf_loader = AppiumJsonLoader
