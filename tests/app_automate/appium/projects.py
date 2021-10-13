@@ -75,10 +75,20 @@ class TestProjectsApi(unittest.TestCase):
 
 
 def projects_api_test_suite():
+    runner = unittest.TextTestRunner(verbosity=2)
+
     suite = unittest.TestSuite()
+
     suite.addTest(TestProjectsApi("test_recent_projects"))
     suite.addTest(TestProjectsApi("test_details"))
     suite.addTest(TestProjectsApi("test_update_project_name"))
     suite.addTest(TestProjectsApi("test_status_badge_key"))
     suite.addTest(TestProjectsApi("test_delete"))
-    return suite
+
+    test_result = runner.run(suite)
+
+    if len(test_result.errors) > 0:
+        return 1
+    if len(test_result.failures) > 0:
+        return 2
+    return 0

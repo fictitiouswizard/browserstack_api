@@ -24,6 +24,8 @@ class TestAppsApi(unittest.TestCase):
 
 
 def apps_api_test_suite():
+    runner = unittest.TextTestRunner(verbosity=2)
+
     suite = unittest.TestSuite()
 
     suite.addTest(TestAppsApi("test_upload_app"))
@@ -31,7 +33,13 @@ def apps_api_test_suite():
     suite.addTest(TestAppsApi("test_uploaded_apps_by_group"))
     suite.addTest(TestAppsApi("test_delete_app"))
 
-    return suite
+    test_result = runner.run(suite)
+
+    if len(test_result.errors) > 0:
+        return 1
+    if len(test_result.failures) > 0:
+        return 2
+    return 0
 
 
 

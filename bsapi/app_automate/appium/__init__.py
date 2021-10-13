@@ -4,3 +4,4 @@ from bsapi.app_automate.appium.devices import DevicesApi, Device
 from bsapi.app_automate.appium.plans import PlansApi, AppAutomatePlan
 from bsapi.app_automate.appium.projects import ProjectsApi, Project
 from bsapi.app_automate.appium.sessions import SessionsApi, Session, SessionStatus
+from bsapi.app_automate.appium.utils import connect

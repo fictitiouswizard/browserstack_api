@@ -1,4 +1,3 @@
-import functools
 import os
 from os import path
 
@@ -8,10 +7,12 @@ from appium import webdriver
 
 import bsapi
 from bsapi.app_automate.appium import AppsApi
+import multiprocessing as mp
 
 
 class AppiumJsonLoader(bsapi.ConfigLoader):
     conf_file_name = "bsapi.json"
+    file_lock = mp.Lock()
 
     @classmethod
     def get_config_file(cls, settings) -> str:
@@ -20,16 +21,18 @@ class AppiumJsonLoader(bsapi.ConfigLoader):
     @classmethod
     def get_config(cls, settings, config) -> bsapi.configuration.BSAPIConf:
         if config is None:
-            with open(cls.get_config_file(settings), "r") as config_file:
-                config = jsonpickle.decode(config_file.read())
+            with cls.file_lock:
+                with open(cls.get_config_file(settings), "r") as config_file:
+                    config = jsonpickle.decode(config_file.read())
             return config
         else:
             return config
 
     @classmethod
     def save_config(cls, settings, config):
-        with open(AppiumJsonLoader.get_config_file(settings), "w") as config_file:
-            config_file.write(jsonpickle.encode(config, indent=4))
+        with cls.file_lock:
+            with open(AppiumJsonLoader.get_config_file(settings), "w") as config_file:
+                config_file.write(jsonpickle.encode(config, indent=4))
 
     @classmethod
     def get_app(cls, settings, platform, package, version) -> dict:
@@ -145,13 +148,3 @@ def connect(platform=None, package=None, version=None, caps=None, app_url=None) 
     driver = webdriver.Remote(url, desired_caps)
     return driver
 
-
-def appium_test_suite(f, platform=None, package=None, version=None, caps=None, app_url=None):
-    @functools.wraps
-    def wrapper(*args, **kwargs):
-        driver = connect(platform, package, version, caps, app_url)
-        kwargs["driver"] = driver
-        f(*args, **kwargs)
-        driver.quit()
-
-    return wrapper

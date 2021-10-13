@@ -2,6 +2,8 @@ import unittest
 import os
 from bsapi.app_automate import MediaFile, MediaApi
 from requests.exceptions import HTTPError
+from bsapi import Settings
+from tests.app_automate.appium.utils import StaticConfig
 
 
 class TestMediaApi(unittest.TestCase):
@@ -33,6 +35,12 @@ class TestMediaApi(unittest.TestCase):
 
 
 def test_suite_media_api():
+    runner = unittest.TextTestRunner(verbosity=2)
+
+    # Settings.conf_loader = StaticConfig()
+    # Settings.bootstrap()
+    # Settings.get_config()
+
     suite = unittest.TestSuite()
 
     suite.addTest(TestMediaApi("test_upload_file"))
@@ -40,7 +48,13 @@ def test_suite_media_api():
     suite.addTest(TestMediaApi("test_recent_group_media"))
     suite.addTest(TestMediaApi("test_delete"))
 
-    return suite
+    test_result = runner.run(suite)
+
+    if len(test_result.errors) > 0:
+        return 1
+    if len(test_result.failures) > 0:
+        return 2
+    return 0
 
 
 class TestMedia(unittest.TestCase):
@@ -53,9 +67,17 @@ class TestMedia(unittest.TestCase):
 
 
 def test_suite_media():
+    runner = unittest.TextTestRunner(verbosity=2)
+
     suite = unittest.TestSuite()
 
     suite.addTest(TestMedia("test_delete"))
 
-    return suite
+    test_result = runner.run(suite)
+
+    if len(test_result.errors) > 0:
+        return 1
+    if len(test_result.failures) > 0:
+        return 2
+    return 0
 

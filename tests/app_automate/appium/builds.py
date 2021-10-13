@@ -57,10 +57,18 @@ class TestBuildsApi(unittest.TestCase):
 
 
 def builds_api_test_suite():
+    runner = unittest.TextTestRunner(verbosity=2)
+
     suite = unittest.TestSuite()
 
     suite.addTest(TestBuildsApi("test_recent_builds"))
     suite.addTest(TestBuildsApi("test_details"))
     suite.addTest(TestBuildsApi("test_delete"))
 
-    return suite
+    test_result = runner.run(suite)
+
+    if len(test_result.errors) > 0:
+        return 1
+    if len(test_result.failures) > 0:
+        return 2
+    return 0

@@ -5,6 +5,7 @@ from requests.auth import HTTPBasicAuth
 from dotenv import load_dotenv
 from from_root import from_root
 
+
 load_dotenv()
 
 

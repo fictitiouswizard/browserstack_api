@@ -239,6 +239,8 @@ class TestSessionsApi(unittest.TestCase):
 
 
 def session_test_suite():
+    runner = unittest.TextTestRunner(verbosity=2)
+
     suite = unittest.TestSuite()
 
     suite.addTest(TestSession("test_session_by_id"))
@@ -255,10 +257,18 @@ def session_test_suite():
     suite.addTest(TestSession("test_save_network_logs"))
     suite.addTest(TestSession("test_save_video"))
 
-    return suite
+    test_result = runner.run(suite)
+
+    if len(test_result.errors) > 0:
+        return 1
+    if len(test_result.failures) > 0:
+        return 2
+    return 0
 
 
 def sessions_api_test_suite():
+    runner = unittest.TextTestRunner(verbosity=2)
+
     suite = unittest.TestSuite()
 
     suite.addTest(TestSessionsApi("test_session_details"))
@@ -270,4 +280,10 @@ def sessions_api_test_suite():
     suite.addTest(TestSessionsApi("test_get_profiling_data"))
     suite.addTest(TestSessionsApi("test_delete"))
 
-    return suite
+    test_result = runner.run(suite)
+
+    if len(test_result.errors) > 0:
+        return 1
+    if len(test_result.failures) > 0:
+        return 2
+    return 0
