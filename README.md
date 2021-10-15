@@ -41,7 +41,7 @@ Get the logs for a BrowserStack session
 
 import os
 from appium import webdriver
-from bsapi.app_automate.appium import Session
+from bsapi.app_automate.appium import AppAutomateSession
 
 username = os.getenv("BROWSERSTACK_USERNAME")
 key = os.getenv("BROWSERSTACK_KEY")
@@ -62,7 +62,7 @@ driver = webdriver.Remote(url, desired_caps)
 session_id = driver.session_id
 driver.quit()
 
-session = Session.by_id(session_id)
+session = AppAutomateSession.by_id(session_id)
 session.save_session_logs("session.log")
 session.save_appium_logs("appium.log")
 session.save_device_logs("device.log")

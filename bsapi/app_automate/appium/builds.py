@@ -97,12 +97,12 @@ class BuildsApi(Api):
 
         :param str build_id:
         :return: A list of Sessions
-        :rtype: list[:class:`bsapi.app_automate.appium.sessions.Session`]
+        :rtype: list[:class:`bsapi.app_automate.appium.sessions.AppAutomateSession`]
         """
         if build_id is None:
             raise ValueError("Build ID is required")
 
-        from .sessions import Session
+        from .sessions import AppAutomateSession
 
         url = f"{Settings.base_url}/app-automate/builds/{build_id}/sessions.json"
         response = cls.http.get(url, **Settings.request())
@@ -110,7 +110,7 @@ class BuildsApi(Api):
         if response.status_code == 200:
             rj = response.json()
             sessions = [
-                Session(
+                AppAutomateSession(
                     name=s["name"] if "name" in s else None,
                     duration=s["duration"] if "duration" in s else None,
                     os=s["os"] if "os" in s else None,

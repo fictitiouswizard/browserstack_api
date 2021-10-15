@@ -3,7 +3,7 @@ from bsapi.models import AutomatePlan
 
 
 class PlansApi(Api):
-    """Class for interacting with the Plans REST endpoint on BrowserStack"""
+    """Class for interacting with the Automate Plans REST endpoint on BrowserStack"""
 
     @classmethod
     def details(cls):
@@ -17,7 +17,7 @@ class PlansApi(Api):
         :return: The plan details for the current user
         :rtype: :class:`bsapi.models.AutomatePlan`
         """
-        url = f"{Settings.base_url}/app-automate/plan.json"
+        url = f"{Settings.base_url}/automate/plan.json"
 
         response = cls.http.get(url, **Settings.request())
 

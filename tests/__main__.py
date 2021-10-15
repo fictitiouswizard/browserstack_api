@@ -1,11 +1,11 @@
 import unittest
 
-from .app_automate.appium.devices import TestDevicesApi
-from .app_automate.appium.plans import TestPlansApi
-from .app_automate.appium.apps import apps_api_test_suite
-from .app_automate.appium.builds import builds_api_test_suite
-from .app_automate.appium.projects import projects_api_test_suite
-from .app_automate.appium.sessions import sessions_api_test_suite, session_test_suite
+from tests.app_automate.appium.devices import TestDevicesApi
+from tests.app_automate.appium.plans import TestPlansApi
+from tests.app_automate.appium.apps import apps_api_test_suite
+from tests.app_automate.appium.builds import builds_api_test_suite
+from tests.app_automate.appium.projects import projects_api_test_suite
+from tests.app_automate.appium.sessions import sessions_api_test_suite, session_test_suite
 
 
 def main():

@@ -10,7 +10,7 @@ from bsapi.app_automate.appium import AppsApi
 from bsapi.app_automate.appium import BuildsApi
 from bsapi.app_automate.appium import ProjectsApi
 from bsapi.app_automate.appium import SessionsApi
-from bsapi.app_automate.appium.sessions import SessionStatus, Session
+from bsapi.app_automate.appium.sessions import SessionStatus, AppAutomateSession
 
 
 def setup_session_test():
@@ -34,7 +34,7 @@ def setup_session_test():
     session_id = driver.session_id
     driver.quit()
 
-    session = Session.by_id(session_id)
+    session = AppAutomateSession.by_id(session_id)
     build_id = session.build.hashed_id
     project_id = session.project.project_id
 
@@ -98,44 +98,44 @@ class TestSession(unittest.TestCase):
         tear_down_session_test(cls.app, cls.project_id, cls.build_id, cls.session_id)
 
     def test_session_by_id(self):
-        session = Session.by_id(TestSession.session_id)
+        session = AppAutomateSession.by_id(TestSession.session_id)
         self.assertEqual(session.hashed_id, TestSession.session_id)
 
     def test_build(self):
-        session = Session.by_id(TestSession.session_id)
+        session = AppAutomateSession.by_id(TestSession.session_id)
         self.assertEqual(session.build.name, "Python Android")
 
     def test_project(self):
-        session = Session.by_id(TestSession.session_id)
+        session = AppAutomateSession.by_id(TestSession.session_id)
         self.assertEqual(session.project.name, "BrowserStack Rest API")
 
     def test_get_session_logs(self):
-        session = Session.by_id(TestSession.session_id)
+        session = AppAutomateSession.by_id(TestSession.session_id)
         with session.get_session_logs() as response:
             self.assertGreater(len(response.content), 0)
 
     def test_get_appium_logs(self):
-        session = Session.by_id(TestSession.session_id)
+        session = AppAutomateSession.by_id(TestSession.session_id)
         with session.get_appium_logs() as response:
             self.assertGreater(len(response.content), 0)
 
     def test_get_device_logs(self):
-        session = Session.by_id(TestSession.session_id)
+        session = AppAutomateSession.by_id(TestSession.session_id)
         with session.get_device_logs() as response:
             self.assertGreater(len(response.content), 0)
 
     def test_get_network_logs(self):
-        session = Session.by_id(TestSession.session_id)
+        session = AppAutomateSession.by_id(TestSession.session_id)
         with session.get_network_logs() as response:
             self.assertGreater(len(response.content), 0)
 
     def test_get_video(self):
-        session = Session.by_id(TestSession.session_id)
+        session = AppAutomateSession.by_id(TestSession.session_id)
         with session.get_video() as response:
             self.assertGreater(len(response.content), 0)
 
     def test_save_session_logs(self):
-        session = Session.by_id(TestSession.session_id)
+        session = AppAutomateSession.by_id(TestSession.session_id)
         session.save_session_logs("./session.log")
         if os.path.isfile("./session.log"):
             os.remove("./session.log")
@@ -144,7 +144,7 @@ class TestSession(unittest.TestCase):
             self.fail()
 
     def test_save_appium_logs(self):
-        session = Session.by_id(TestSession.session_id)
+        session = AppAutomateSession.by_id(TestSession.session_id)
         session.save_appium_logs("./appium.log")
         if os.path.isfile("./appium.log"):
             os.remove("./appium.log")
@@ -153,7 +153,7 @@ class TestSession(unittest.TestCase):
             self.fail()
 
     def test_save_device_logs(self):
-        session = Session.by_id(TestSession.session_id)
+        session = AppAutomateSession.by_id(TestSession.session_id)
         session.save_device_logs("./device.log")
         if os.path.isfile("./device.log"):
             os.remove("./device.log")
@@ -162,7 +162,7 @@ class TestSession(unittest.TestCase):
             self.fail()
 
     def test_save_network_logs(self):
-        session = Session.by_id(TestSession.session_id)
+        session = AppAutomateSession.by_id(TestSession.session_id)
         session.save_network_logs("./network.log")
         if os.path.isfile("./network.log"):
             os.remove("./network.log")
@@ -171,7 +171,7 @@ class TestSession(unittest.TestCase):
             self.fail()
 
     def test_save_video(self):
-        session = Session.by_id(TestSession.session_id)
+        session = AppAutomateSession.by_id(TestSession.session_id)
         session.save_video("./session.mp4")
         if os.path.isfile("./session.mp4"):
             os.remove("./session.mp4")
