@@ -1,32 +1,6 @@
 from bsapi import Settings, Api
 from .builds import Build
-from .responses import DeleteResponse
-
-
-class Project:
-    """
-    BrowserStack Project
-
-    :param str project_id:
-    :param str name:
-    :param str group_id:
-    :param str user_id:
-    :param str created_at:
-    :param str updated_at:
-    :param str sub_group_id:
-    :param builds:
-    :type builds: list[:class:`bsapi.app_automate.appium.builds.Build`]
-    """
-    def __init__(self, project_id=None, name=None, group_id=None, user_id=None,
-                 created_at=None, updated_at=None, sub_group_id=None, builds=None):
-        self.project_id = project_id
-        self.name = name
-        self.group_id = group_id
-        self.user_id = user_id
-        self.created_at = created_at
-        self.updated_at = updated_at
-        self.sub_group_id = sub_group_id
-        self.builds = builds
+from bsapi.models import DeleteResponse, Project
 
 
 class ProjectsApi(Api):

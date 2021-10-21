@@ -1,43 +1,6 @@
 from bsapi import Settings, Api
 from .apps import UploadedApp
-from .responses import DeleteResponse
-
-
-class Build:
-    """
-    :var str build_id: Unique ID for the build
-    :var str name: Build name
-    :var str duration:
-    :var str status:
-    :var str tags:
-    :var str group_id:
-    :var str user_id:
-    :var automation_project_id:
-    :var str created_at:
-    :var str updated_at:
-    :var str hashed_id:
-    :var str delta:
-    :var str test_data:
-    :var str sub_group_id:
-    """
-    def __init__(self, build_id=None, name=None, duration=None, status=None, tags=None,
-                 group_id=None, user_id=None, automation_project_id=None, created_at=None,
-                 updated_at=None, hashed_id=None, delta=None, test_data=None,
-                 sub_group_id=None):
-        self.build_id = build_id
-        self.name = name
-        self.duration = duration
-        self.status = status
-        self.tags = tags
-        self.group_id = group_id
-        self.user_id = user_id
-        self.automation_project_id = automation_project_id
-        self.created_at = created_at
-        self.updated_at = updated_at
-        self.hashed_id = hashed_id
-        self.delta = delta
-        self.test_data = test_data
-        self.sub_group_id = sub_group_id
+from bsapi.models import DeleteResponse, Build
 
 
 class BuildsApi(Api):
