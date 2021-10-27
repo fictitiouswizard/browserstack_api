@@ -8,7 +8,7 @@ Exports:
 Modules:
     app_automate.appium
 """
-__version__ = "0.1.0"
+__version__ = "0.1.2"
 
-from .settings import Settings
-from .base import Api
+from bsapi.settings import Settings
+from bsapi.base import Api
