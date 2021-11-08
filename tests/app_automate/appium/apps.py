@@ -17,6 +17,10 @@ class TestAppsApi(unittest.TestCase):
         apps = AppsApi.uploaded_apps_by_group()
         self.assertGreaterEqual(len(apps), 1)
 
+    def test_uploaded_apps_by_group_with_limit(self):
+        apps = AppsApi.uploaded_apps_by_group(limit=50)
+        self.assertGreaterEqual(len(apps), 1)
+
     def test_delete_app(self):
         apps = AppsApi.uploaded_apps("calc")
         response = AppsApi.delete_app(apps[0].app_id)
@@ -29,6 +33,7 @@ def apps_api_test_suite():
     suite.addTest(TestAppsApi("test_upload_app"))
     suite.addTest(TestAppsApi("test_uploaded_apps"))
     suite.addTest(TestAppsApi("test_uploaded_apps_by_group"))
+    suite.addTest(TestAppsApi("test_uploaded_apps_by_group_with_limit"))
     suite.addTest(TestAppsApi("test_delete_app"))
 
     return suite

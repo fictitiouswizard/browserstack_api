@@ -135,7 +135,7 @@ class AppsApi(Api):
             response.raise_for_status()
 
     @classmethod
-    def uploaded_apps_by_group(cls):
+    def uploaded_apps_by_group(cls, limit=None):
         """
         Get the uploaded apps for your group
 
@@ -148,7 +148,12 @@ class AppsApi(Api):
         """
         url = f"{Settings.base_url}/app-automate/recent_group_apps"
 
-        response = cls.http.get(url, **Settings.request())
+        params = {}
+
+        if limit is not None:
+            params = {"limit": limit}
+
+        response = cls.http.get(url, params=params, **Settings.request())
 
         if response.status_code == 200:
             rj = response.json()
