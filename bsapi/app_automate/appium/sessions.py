@@ -1,5 +1,5 @@
 from bsapi import Settings, Api
-from .responses import DeleteResponse
+from bsapi.models import DeleteResponse
 from .apps import UploadedApp
 from .projects import ProjectsApi
 from .builds import BuildsApi
@@ -16,7 +16,7 @@ class SessionStatus:
     failed = "failed"
 
 
-class Session:
+class AppAutomateSession:
     """
     BrowserStack Session
 
@@ -356,7 +356,7 @@ class SessionsApi(Api):
 
         :param session_id: the hashed id for the session
         :return: Session Object
-        :rtype: :class:`bsapi.app_automate.appium.sessions.Session`
+        :rtype: :class:`bsapi.app_automate.appium.sessions.AppAutomateSession`
         """
         if session_id is None:
             raise ValueError("Session ID is required")
@@ -368,7 +368,7 @@ class SessionsApi(Api):
         if response.status_code == 200:
             rj = response.json()["automation_session"]
 
-            return Session(
+            return AppAutomateSession(
                 name=rj["name"] if "name" in rj else None,
                 duration=rj["duration"] if "duration" in rj else None,
                 os=rj["os"] if "os" in rj else None,
@@ -428,7 +428,7 @@ class SessionsApi(Api):
 
         if response.status_code == 200:
             rj = response.json()["automation_session"]
-            return Session(
+            return AppAutomateSession(
                 name=rj["name"] if "name" in rj else None,
                 duration=rj["duration"] if "duration" in rj else None,
                 os=rj["os"] if "os" in rj else None,

@@ -1,43 +1,6 @@
 from bsapi import Settings, Api
 from .apps import UploadedApp
-from .responses import DeleteResponse
-
-
-class Build:
-    """
-    :var str build_id: Unique ID for the build
-    :var str name: Build name
-    :var str duration:
-    :var str status:
-    :var str tags:
-    :var str group_id:
-    :var str user_id:
-    :var automation_project_id:
-    :var str created_at:
-    :var str updated_at:
-    :var str hashed_id:
-    :var str delta:
-    :var str test_data:
-    :var str sub_group_id:
-    """
-    def __init__(self, build_id=None, name=None, duration=None, status=None, tags=None,
-                 group_id=None, user_id=None, automation_project_id=None, created_at=None,
-                 updated_at=None, hashed_id=None, delta=None, test_data=None,
-                 sub_group_id=None):
-        self.build_id = build_id
-        self.name = name
-        self.duration = duration
-        self.status = status
-        self.tags = tags
-        self.group_id = group_id
-        self.user_id = user_id
-        self.automation_project_id = automation_project_id
-        self.created_at = created_at
-        self.updated_at = updated_at
-        self.hashed_id = hashed_id
-        self.delta = delta
-        self.test_data = test_data
-        self.sub_group_id = sub_group_id
+from bsapi.models import DeleteResponse, Build
 
 
 class BuildsApi(Api):
@@ -97,12 +60,12 @@ class BuildsApi(Api):
 
         :param str build_id:
         :return: A list of Sessions
-        :rtype: list[:class:`bsapi.app_automate.appium.sessions.Session`]
+        :rtype: list[:class:`bsapi.app_automate.appium.sessions.AppAutomateSession`]
         """
         if build_id is None:
             raise ValueError("Build ID is required")
 
-        from .sessions import Session
+        from .sessions import AppAutomateSession
 
         url = f"{Settings.base_url}/app-automate/builds/{build_id}/sessions.json"
         response = cls.http.get(url, **Settings.request())
@@ -110,7 +73,7 @@ class BuildsApi(Api):
         if response.status_code == 200:
             rj = response.json()
             sessions = [
-                Session(
+                AppAutomateSession(
                     name=s["name"] if "name" in s else None,
                     duration=s["duration"] if "duration" in s else None,
                     os=s["os"] if "os" in s else None,
