@@ -145,7 +145,7 @@ class AppAutomateSession:
         else:
             response.raise_for_status()
 
-    def save_session_logs(self, filename=None):
+    def save_session_logs(self, file_name=None):
         """
         Download the session logs from BrowserStack to the file name
 
@@ -154,13 +154,13 @@ class AppAutomateSession:
             session = Session.by_id(session_id)
             session.save_session_logs("session.log")
 
-        :param filename: File name for the logs to be saved to
+        :param file_name: File name for the logs to be saved to
         :return: None
         """
-        if filename is None:
+        if file_name is None:
             raise ValueError("File name is required")
 
-        with open(filename, "wb") as f:
+        with open(file_name, "wb") as f:
             with self.get_session_logs() as response:
                 f.write(response.content)
 
@@ -184,7 +184,7 @@ class AppAutomateSession:
         else:
             response.raise_for_status()
 
-    def save_appium_logs(self, filename=None):
+    def save_appium_logs(self, file_name=None):
         """
         Save the appium logs to the file system
 
@@ -193,13 +193,13 @@ class AppAutomateSession:
             session = Session.by_id(session_id)
             session.save_appium_logs("appium.log")
 
-        :param filename:
+        :param file_name:
         """
-        if filename is None:
+        if file_name is None:
             raise ValueError("File name is required")
 
         with self.get_appium_logs() as response:
-            with open(filename, "wb") as f:
+            with open(file_name, "wb") as f:
                 f.write(response.content)
 
     def get_device_logs(self):
@@ -223,7 +223,7 @@ class AppAutomateSession:
         else:
             response.raise_for_status()
 
-    def save_device_logs(self, filename=None):
+    def save_device_logs(self, file_name=None):
         """
         Save the device logs to the file system
 
@@ -232,13 +232,13 @@ class AppAutomateSession:
             session = Session.by_id(session_id)
             session.save_device_logs("device.log")
 
-        :param filename:
+        :param file_name:
         """
-        if filename is None:
+        if file_name is None:
             raise ValueError("File name is required")
 
         with self.get_device_logs() as response:
-            with open(filename, "wb") as f:
+            with open(file_name, "wb") as f:
                 f.write(response.content)
 
     def get_network_logs(self):
@@ -261,7 +261,7 @@ class AppAutomateSession:
         else:
             response.raise_for_status()
 
-    def save_network_logs(self, filename=None):
+    def save_network_logs(self, file_name=None):
         """
         Save the network logs to the file system
 
@@ -270,13 +270,13 @@ class AppAutomateSession:
             session = Session.by_id(session_id)
             session.save_network_logs("network.log")
 
-        :param filename:
+        :param file_name:
         """
-        if filename is None:
+        if file_name is None:
             raise ValueError("File name is required")
 
         with self.get_network_logs() as response:
-            with open(filename, "wb") as f:
+            with open(file_name, "wb") as f:
                 f.write(response.content)
 
     def get_video(self):
@@ -299,7 +299,7 @@ class AppAutomateSession:
         else:
             response.raise_for_status()
 
-    def save_video(self, filename=None):
+    def save_video(self, file_name=None):
         """
         Save the video of the session to the file system
 
@@ -309,13 +309,13 @@ class AppAutomateSession:
             session.save_video("BrowserStack.mp4")
 
 
-        :param filename:
+        :param file_name:
         """
-        if filename is None:
+        if file_name is None:
             raise ValueError("File name is required")
 
         with self.get_video() as response:
-            with open(filename, "wb") as f:
+            with open(file_name, "wb") as f:
                 f.write(response.content)
 
 

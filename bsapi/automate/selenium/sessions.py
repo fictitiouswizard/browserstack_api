@@ -84,46 +84,46 @@ class AutomateSession:
         )
 
     @staticmethod
-    def save_logs(url, filename):
-        with open(filename, "wb") as f:
+    def save_logs(url, file_name):
+        with open(file_name, "wb") as f:
             with SessionsApi.get_logs(url) as response:
                 f.write(response.content)
 
     def get_session_logs(self):
         return SessionsApi.get_logs(self.logs)
 
-    def save_session_logs(self, filename):
-        self.save_logs(self.logs, filename)
+    def save_session_logs(self, file_name):
+        self.save_logs(self.logs, file_name)
 
     def get_appium_logs(self):
         return SessionsApi.get_logs(self.appium_logs_url)
 
-    def save_appium_logs(self, filename):
-        self.save_logs(self.appium_logs_url, filename)
+    def save_appium_logs(self, file_name):
+        self.save_logs(self.appium_logs_url, file_name)
 
     def get_browser_console_logs(self):
         return SessionsApi.get_logs(self.browser_console_logs_url)
 
-    def save_browser_console_logs(self, filename):
-        self.save_logs(self.browser_console_logs_url, filename)
+    def save_browser_console_logs(self, file_name):
+        self.save_logs(self.browser_console_logs_url, file_name)
 
     def get_har_logs(self):
         return SessionsApi.get_logs(self.har_logs_url)
 
-    def save_har_logs(self, filename):
-        self.save_logs(self.har_logs_url, filename)
+    def save_har_logs(self, file_name):
+        self.save_logs(self.har_logs_url, file_name)
 
     def get_selenium_logs(self):
         return SessionsApi.get_logs(self.selenium_logs_url)
 
-    def save_selenium_logs(self, filename):
-        self.save_logs(self.selenium_logs_url, filename)
+    def save_selenium_logs(self, file_name):
+        self.save_logs(self.selenium_logs_url, file_name)
 
     def get_video(self):
         return SessionsApi.get_logs(self.video_url)
 
-    def save_video(self, filename):
-        self.save_logs(self.video_url, filename)
+    def save_video(self, file_name):
+        self.save_logs(self.video_url, file_name)
 
     def update_status(self, status, reason=None):
         session = SessionsApi.update_status(self.hashed_id, status, reason)
