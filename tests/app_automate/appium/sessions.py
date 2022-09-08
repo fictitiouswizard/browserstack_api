@@ -5,7 +5,7 @@ import unittest
 from appium import webdriver
 from requests.exceptions import HTTPError
 
-from bsapi import Settings
+from bsapi import Settings, Api
 from bsapi.app_automate.appium import AppsApi
 from bsapi.app_automate.appium import BuildsApi
 from bsapi.app_automate.appium import ProjectsApi
@@ -92,6 +92,7 @@ class TestSession(unittest.TestCase):
         cls.project_id = test_info["project"]
         cls.build_id = test_info["build"]
         cls.session_id = test_info["session"]
+        Api.set_timeout(15, 1)
 
     @classmethod
     def tearDownClass(cls) -> None:

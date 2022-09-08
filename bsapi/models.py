@@ -59,17 +59,19 @@ class Build:
     :var str test_data:
     :var str sub_group_id:
     :var str framework:
+    :var str build_tag:
     """
 
-    def __init__(self, build_id=None, name=None, duration=None, status=None, tags=None,
+    def __init__(self, build_id=None, name=None, duration=None, status=None, tags = None,
                  group_id=None, user_id=None, automation_project_id=None, created_at=None,
                  updated_at=None, hashed_id=None, delta=None, test_data=None,
-                 sub_group_id=None, framework=None):
+                 sub_group_id=None, framework=None, build_tag=None,):
         self.build_id = build_id
         self.name = name
         self.duration = duration
         self.status = status
         self.tags = tags
+        self.build_tag = build_tag
         self.group_id = group_id
         self.user_id = user_id
         self.automation_project_id = automation_project_id
@@ -84,21 +86,22 @@ class Build:
     @classmethod
     def from_dict(cls, b):
         build = cls()
-        build.build_id = b["id"]
-        build.name = b["name"]
-        build.duration = b["duration"]
-        build.status = b["status"]
-        build.tags = b["tags"]
-        build.group_id = b["group_id"]
-        build.user_id = b["user_id"]
-        build.automation_project_id = b["automation_project_id"]
-        build.created_at = b["created_at"]
-        build.updated_at = b["updated_at"]
-        build.hashed_id = b["hashed_id"]
-        build.delta = b["delta"]
-        build.sub_group_id = b["sub_group_id"]
-        build.framework = b["framework"]
-        build.test_data = b["test_data"]
+        build.build_id = b["id"] if "id" in b else None
+        build.name = b["name"] if "name" in b else None
+        build.duration = b["duration"] if "duration" in b else None
+        build.status = b["status"] if "status" in b else None
+        build.tags = b["tags"] if "tags" in b else None
+        build.build_tag = b["build_tag"] if "build_tag" in b else None
+        build.group_id = b["group_id"] if "group_id" in b else None
+        build.user_id = b["user_id"] if "user_id" in b else None
+        build.automation_project_id = b["automation_project_id"] if "automation_project_id" in b else None
+        build.created_at = b["created_at"] if "created_at" in b else None
+        build.updated_at = b["updated_at"] if "updated_at" in b else None
+        build.hashed_id = b["hashed_id"] if "hashed_id" in b else None
+        build.delta = b["delta"] if "delta" in b else None
+        build.sub_group_id = b["sub_group_id"] if "sub_group_id" in b else None
+        build.framework = b["framework"] if "framework" in b else None
+        build.test_data = b["test_data"] if "test_data" in b else None
         return build
 
 
